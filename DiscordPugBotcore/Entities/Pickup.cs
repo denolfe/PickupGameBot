@@ -7,30 +7,31 @@ namespace DiscordPugBotcore.Entities
     public class Pickup
     {
         public Game CurrentGame;
-        public int PlayersRequired = 10;
+        private int _minimumPlayers;
         public List<PugPlayer> PlayerPool { get; set; }
         public List<PugPlayer> Subs { get; set; }
-        public bool IsFull => this.PlayerPool.Count >= this.PlayersRequired;
+        public bool HasMinimumPlayers => this.PlayerPool.Count >= this._minimumPlayers;
         public PickupState PickupState;
 
-        public Pickup()
+        public Pickup(int minimumPlayers = 10)
         {
+            this._minimumPlayers = minimumPlayers;
             this.PickupState = PickupState.Gathering;
             this.PlayerPool = new List<PugPlayer>();
         }
 
         public void Start()
         {
-            if (!this.IsFull)
+            if (!this.HasMinimumPlayers)
             {
-                Console.WriteLine($"Not enought players in pool. {this.PlayerPool.Count}/{this.PlayersRequired}");
+                Console.WriteLine($"Not enough players in pool [{this.PlayerPool.Count}/{this._minimumPlayers}]");
             }
                 
         }
 
         public void AddPlayer(PugPlayer pugPlayer)
         {
-            if (this.IsFull)
+            if (this.HasMinimumPlayers)
             {
                 Console.WriteLine("Pug is full.");
                 return;
@@ -61,7 +62,7 @@ namespace DiscordPugBotcore.Entities
 
         public string Status()
         {
-            return $"Status: {this.PickupState} - {this.PlayerPool.Count}/{this.PlayersRequired}";
+            return $"Status: {this.PickupState} - {this.PlayerPool.Count}/{this._minimumPlayers}";
         }
     }
 }
