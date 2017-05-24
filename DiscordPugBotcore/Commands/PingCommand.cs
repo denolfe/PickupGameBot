@@ -3,7 +3,7 @@ using Discord.Commands;
 
 namespace DiscordPugBotcore.Commands
 {
-    public class Ping : ModuleBase
+    public class PingCommand : ModuleBase
     {
         [Command("ping"), Summary("Pings the bot.")]
         public async Task PingBot()

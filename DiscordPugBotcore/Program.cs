@@ -27,7 +27,7 @@ namespace DiscordPugBotcore
 
             _client.Ready += () =>
             {
-                Logger(new LogMessage(LogSeverity.Info, "Bot", "Bot is connected!"));
+                Logger(new LogMessage(LogSeverity.Info, "Bot", "Connected"));
                 return Task.CompletedTask;
             };
 
@@ -92,18 +92,6 @@ namespace DiscordPugBotcore
                 //    await msg.Channel.SendMessageAsync(result.ErrorReason);
             }
         }
-        
-        private async Task MessageReceived(SocketMessage message)
-        {
-            if (message.Content[0] == '!')
-                await Logger(new LogMessage(LogSeverity.Info, "Bot",
-                    $"Command Received -> {message.Content} by {message.Author}"));
-            
-            if (message.Content == "!ping")
-            {
-                await message.Channel.SendMessageAsync("Pong!");
-            }
-        }
 
         // Create a named logging handler, so it can be re-used by addons
         // that ask for a Func<LogMessage, Task>.
@@ -127,7 +115,7 @@ namespace DiscordPugBotcore
                     Console.ForegroundColor = ConsoleColor.DarkGray;
                     break;
             }
-            Console.WriteLine($"{DateTime.Now,-19} [{message.Severity,8}] {message.Source}: {message.Message}");
+            Console.WriteLine($"{DateTime.Now,-19} [{message.Severity,8}] {message.Source,7}: {message.Message}");
             Console.ForegroundColor = cc;
             return Task.CompletedTask;
         }
