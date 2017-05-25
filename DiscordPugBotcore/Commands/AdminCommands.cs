@@ -29,15 +29,15 @@ namespace DiscordPugBotcore.Commands
             await ReplyAsync($"{this.Context.User.Username} force set {user.Mention} as captain");
         }
         
-        [Command("restart"), Summary("Go back to gather state")]
-        public async Task Restart()
+        [Command("repick"), Summary("Go back to gather state")]
+        public async Task Repick()
         {
             //TODO: Remove captains, set state to Gather
             await ReplyAsync($"{this.Context.Client.CurrentUser.Username} is now in gathering state");
         }
         
-        [Command("clear"), Summary("Go back to gather state and clear player pool")]
-        public async Task Clear()
+        [Command("reset"), Summary("Go back to gather state and clear player pool")]
+        public async Task Reset()
         {
             //TODO: Remove captains, Mention all players in pool, clear player pool, set state to Gather
             await ReplyAsync($"All players have been removed, {this.Context.Client.CurrentUser.Username} is now in gathering state");
