@@ -20,24 +20,16 @@ namespace DiscordPugBotcore.Commands
         [Alias("j")]
         public async Task Join([Remainder] string captain = null)
         {
-            _pickupService.AddPlayer(new PugPlayer(this.Context.User, captain?.Trim().ToLower() == "captain"));
-            
-            await ReplyAsync(
-                captain?.Trim().ToLower() == "captain"
-                    ? $"{this.Context.User.Username} joined as eligible captain."
-                    : $"{this.Context.User.Username} joined.");
+            var response = _pickupService.AddPlayer(new PugPlayer(this.Context.User, captain?.Trim().ToLower() == "captain"));
+            await ReplyAsync(response.Message);
         }
 
         [Command("leave"), Summary("Remove player from player pool")]
         [Alias("remove")]
         public async Task Leave([Remainder] string captain = null)
         {
-            _pickupService.RemovePlayer(this.Context.User);
-            
-            await ReplyAsync(
-                captain?.Trim().ToLower() == "captain"
-                    ? $"{this.Context.User.Username} removed captain eligibility."
-                    : $"{this.Context.User.Username} has left.");
+            var response = _pickupService.RemovePlayer(this.Context.User);
+            await ReplyAsync(response.Message);
         }
         
         [Command("list"), Summary("List players in pool")]

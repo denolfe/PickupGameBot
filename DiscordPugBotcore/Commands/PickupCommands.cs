@@ -24,19 +24,19 @@ namespace DiscordPugBotcore.Commands
         [Command("start"), Summary("Set state to picking")]
         public async Task StartPicking()
         {
-            var message = _pickupService.StartPicking();
+            var response = _pickupService.StartPicking();
             //TODO: Check players and at least 2 eligible captains
             //TODO: Choose captains
             //TODO: Set GameState
             //TODO: Notify all players in pool
-            await ReplyAsync(message);
+            await ReplyAsync(response.Message);
         }
 
         [Command("pick"), Summary("Pick a certain player for team")]
         public async Task PickPlayer([Remainder] IUser user)
         {
-            _pickupService.PickPlayer(this.Context.User, user);
-            await ReplyAsync($"{user.Username} has been picked by {this.Context.User}");
+            var response = _pickupService.PickPlayer(this.Context.User, user);
+            await ReplyAsync(response.Message);
         }
     }
 }

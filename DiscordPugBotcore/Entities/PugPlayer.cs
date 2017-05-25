@@ -17,12 +17,12 @@ namespace DiscordPugBotcore.Entities
         }
 
         public void SetCaptain() => 
-            this.IsCaptain = this.WantsCaptain;
+            this.IsCaptain = true;
 
         public override string ToString()
         {
-            var captainFlag = WantsCaptain ? "*" : string.Empty;
-            return $"{User.Username}{captainFlag}";
+            var wantsCaptainFlag = WantsCaptain ? "*" : string.Empty;
+            return $"{User.Username}{wantsCaptainFlag}";
         }
     }
 }
