@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
+using DiscordPugBotcore.Entities;
 using DiscordPugBotcore.Utility;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -32,6 +33,7 @@ namespace DiscordPugBotcore.Services
 
             var services = new ServiceCollection()
                 .AddSingleton<CommandHandler>()
+                .AddSingleton<PickupService>()
                 .AddSingleton(_client)
                 .AddSingleton(config)
                 .AddSingleton(new CommandService(new CommandServiceConfig()
@@ -43,6 +45,7 @@ namespace DiscordPugBotcore.Services
             
             var provider = new DefaultServiceProviderFactory().CreateServiceProvider(services);
             provider.GetService<CommandHandler>();
+            provider.GetService<PickupService>();
             
             return provider;
         }

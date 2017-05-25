@@ -1,3 +1,4 @@
+using System.Text;
 using Discord;
 
 namespace DiscordPugBotcore.Entities
@@ -12,9 +13,16 @@ namespace DiscordPugBotcore.Entities
         {
             this.User = user;
             this.WantsCaptain = wantsCaptain;
+            this.IsCaptain = false;
         }
 
         public void SetCaptain() => 
-            this.IsCaptain = this.WantsCaptain ? true : false;
+            this.IsCaptain = this.WantsCaptain;
+
+        public override string ToString()
+        {
+            var captainFlag = WantsCaptain ? "*" : string.Empty;
+            return $"{User.Username}{captainFlag}";
+        }
     }
 }
