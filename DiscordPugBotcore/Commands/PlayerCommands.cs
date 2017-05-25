@@ -49,7 +49,7 @@ namespace DiscordPugBotcore.Commands
 
             await ReplyAsync(
                 playerList.Count <= 0
-                    ? "_No players in player pool. Type !join to be added to the player pool._"
+                    ? "_No players in player pool. Type **!join** to be added to the player pool._"
                     : $"Player Pool {_pickupService.FormattedPlayerNumbers()}: {string.Join(",", playerList)}"
             );
         }

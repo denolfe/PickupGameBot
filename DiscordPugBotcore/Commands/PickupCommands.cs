@@ -1,4 +1,5 @@
 using System.Threading.Tasks;
+using Discord;
 using Discord.Commands;
 using DiscordPugBotcore.Entities;
 
@@ -29,6 +30,13 @@ namespace DiscordPugBotcore.Commands
             //TODO: Set GameState
             //TODO: Notify all players in pool
             await ReplyAsync(message);
+        }
+
+        [Command("pick"), Summary("Pick a certain player for team")]
+        public async Task PickPlayer([Remainder] IUser user)
+        {
+            _pickupService.PickPlayer(this.Context.User, user);
+            await ReplyAsync($"{user.Username} has been picked by {this.Context.User}");
         }
     }
 }
