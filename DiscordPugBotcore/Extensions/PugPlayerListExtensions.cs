@@ -9,6 +9,17 @@ namespace DiscordPugBotcore.Extensions
     public static class PugPlayerListExtensions
     {
         /// <summary>
+        /// Checks if list contains PugPlayer
+        /// </summary>
+        /// <param name="playerList"></param>
+        /// <param name="player"></param>
+        /// <returns></returns>
+        public static bool ContainsPlayer(this List<PugPlayer> playerList, PugPlayer player)
+        {
+            return playerList.Any(p => p.User.Id == player.User.Id);
+        }
+        
+        /// <summary>
         /// Checks if list contains IUser
         /// </summary>
         /// <param name="playerList"></param>

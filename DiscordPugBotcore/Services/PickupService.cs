@@ -68,7 +68,7 @@ namespace DiscordPugBotcore.Entities
             if (this.PickupState != PickupState.Gathering)
                 return PickupResponse.Bad($"State: {this.PickupState}. New players cannot join at this time");
 
-            if (this.PlayerPool.Contains(pugPlayer))
+            if (this.PlayerPool.ContainsPlayer(pugPlayer))
                 return PickupResponse.Bad($"{pugPlayer.User.Username} has already joined.");
             
             this.PlayerPool.Add(pugPlayer);
