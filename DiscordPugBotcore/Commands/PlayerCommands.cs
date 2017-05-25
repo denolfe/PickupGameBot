@@ -18,7 +18,7 @@ namespace DiscordPugBotcore.Commands
 
         [Command("leave"), Summary("Remove player from player pool")]
         [Alias("remove")]
-        public async Task Leave([Remainder] string captain)
+        public async Task Leave([Remainder] string captain = null)
         {
             await ReplyAsync(
                 captain?.Trim().ToLower() == "captain"
