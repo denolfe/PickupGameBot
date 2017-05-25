@@ -4,12 +4,15 @@ using System.Linq;
 using Discord;
 using DiscordPugBotcore.Enums;
 using DiscordPugBotcore.Extensions;
+using DiscordPugBotcore.Utility;
 
 namespace DiscordPugBotcore.Entities
 {
     public class PickupService
     {
         public Game _currentGame;
+        private Team PickingTeam;
+        private PugPlayer PickingCaptain;
         private int _minimumPlayers = 1;
         private readonly IServiceProvider _provider;
         
@@ -50,9 +53,12 @@ namespace DiscordPugBotcore.Entities
             
             this.PickupState = PickupState.Captains;
             this.SelectCaptains();
-
+            this.AssignCaptains();
+            PrettyConsole.Log(LogSeverity.Debug, "Bot", "Assigned Captains");
+            
             var message = "Picking is about to start!\n" +
-                          $"Captains: {this.Captains.ToJoinedList()}";
+                          $"Captains: {this.Captains.ToJoinedList()}" +
+                          $"Captains: {this.PickingCaptain.User.Username} picks first";
             
             return PickupResponse.Good(message);
         }
@@ -85,9 +91,8 @@ namespace DiscordPugBotcore.Entities
             if (!this.Captains.ContainsPlayer(captain))
                 return PickupResponse.Bad($"{captain.Username} is not a captain!");   
 
-            //TODO: Get current captain's team id
-            //TODO: Assign player to captain's team
-            
+            _currentGame.AddToCaptainsTeam(this.Captains.GetPlayer(captain), this.PlayerPool.GetPlayer(user));
+
             return !this.PlayerPool.ContainsPlayer(user) 
                 ? PickupResponse.Bad($"{user.Username} is not in the player pool") 
                 : PickupResponse.Good($"{user.Username} has been picked by {captain.Username}");
@@ -104,6 +109,13 @@ namespace DiscordPugBotcore.Entities
             // Remove captains from normal player pool
             foreach (var pugPlayer in this.Captains)
                 this.PlayerPool = this.PlayerPool.RemovePlayer(pugPlayer);
+        }
+        
+        private void AssignCaptains()
+        {
+            this.Captains.ElementAt(0).TeamId = 1;
+//            this.Captains.ElementAt(1).TeamId = 2;
+            this.PickingCaptain = this.Captains.ElementAt(0);
         }
 
         public void Repick() => this.PlayerPool.AddRange(this._currentGame.PopAll());

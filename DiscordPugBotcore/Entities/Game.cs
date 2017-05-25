@@ -6,19 +6,29 @@ namespace DiscordPugBotcore.Entities
 {
     public class Game
     {
-        public List<PugPlayer> Team1;
-        public List<PugPlayer> Team2;
+        public Dictionary<int, Team> Teams;
 
-        public void AddToTeam1(PugPlayer player) => Team1.Add(player);    
-        public void AddToTeam2(PugPlayer player) => Team2.Add(player);
+        public void AddToCaptainsTeam(PugPlayer captain, PugPlayer player)
+        {
+            this.Teams[captain.TeamId].AddPlayer(player);
+        }
 
+        public Game()
+        {
+            Teams = new Dictionary<int, Team>
+            {
+                { 1, new Team(1) },
+                { 2, new Team(2) }
+            };
+        }
+        
         public List<PugPlayer> PopAll()
         {
-            List<PugPlayer> allPickedPlayers = new List<PugPlayer>();
-            allPickedPlayers.AddRange(Team1);
-            allPickedPlayers.AddRange(Team2);
-            Team1.Clear();
-            Team2.Clear();
+            var allPickedPlayers = new List<PugPlayer>();
+            allPickedPlayers.AddRange(Teams[0].Players);
+            allPickedPlayers.AddRange(Teams[1].Players);
+            Teams[0].Players.Clear();
+            Teams[1].Players.Clear();
 
             return allPickedPlayers;
         }

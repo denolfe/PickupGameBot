@@ -8,6 +8,7 @@ namespace DiscordPugBotcore.Entities
         public IUser User { get; set; }
         public bool WantsCaptain { get; set; }
         public bool IsCaptain { get; set; }
+        public int TeamId { get; set; }
 
         public PugPlayer(IUser user, bool wantsCaptain)
         {
@@ -15,7 +16,7 @@ namespace DiscordPugBotcore.Entities
             this.WantsCaptain = wantsCaptain;
             this.IsCaptain = false;
         }
-
+        
         public void SetCaptain() => 
             this.IsCaptain = true;
 
