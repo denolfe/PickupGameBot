@@ -18,6 +18,8 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Stubs'" />
+    <Folder Include="Meta" />
+    <Folder Include="Stubs" />
+    <Folder Include="Utility" />
   </ItemGroup>
 </Project>
