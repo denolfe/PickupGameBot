@@ -17,4 +17,7 @@
       <Name>DiscordPugBotcore</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Stubs'" />
+  </ItemGroup>
 </Project>

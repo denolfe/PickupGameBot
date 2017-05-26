@@ -24,7 +24,7 @@ namespace DiscordPugBotcore.Entities
 //        public List<PugPlayer> Captains => this.PlayerPool.Where(p => p.IsCaptain).ToList();
         
         public bool HasMinimumPlayers => this.PlayerPool.Count >= this._minimumPlayers;
-        public bool HasEnoughEligibleCaptains => this.PlayerPool.Select(p => p.WantsCaptain).ToList().Count >= 2;
+        public bool HasEnoughEligibleCaptains => this.PlayerPool.Count(p => p.WantsCaptain) >= 2;
         public bool HasCorrectCaptains => this.PlayerPool.Select(p => p.IsCaptain).ToList().Count == 2;
         public int PlayersNeeded => this._minimumPlayers - this.PlayerPool.Count;
 
