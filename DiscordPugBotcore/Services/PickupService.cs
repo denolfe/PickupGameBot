@@ -13,7 +13,7 @@ namespace DiscordPugBotcore.Entities
         public Game _currentGame;
         private Team PickingTeam;
         private PugPlayer PickingCaptain;
-        private int _minimumPlayers = 1;
+        private int _minimumPlayers = 10;
         private readonly IServiceProvider _provider;
         
         public List<PugPlayer> Captains { get; set; }
@@ -28,7 +28,7 @@ namespace DiscordPugBotcore.Entities
         public bool HasCorrectCaptains => this.PlayerPool.Select(p => p.IsCaptain).ToList().Count == 2;
         public int PlayersNeeded => this._minimumPlayers - this.PlayerPool.Count;
 
-        public PickupService(IServiceProvider provider, int minimumPlayers = 1)
+        public PickupService(IServiceProvider provider, int minimumPlayers = 10)
         {
             this._provider = provider;
             this._minimumPlayers = minimumPlayers;

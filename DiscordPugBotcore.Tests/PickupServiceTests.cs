@@ -1,9 +1,9 @@
 using System;
+using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using Discord;
 using DiscordPugBotcore.Entities;
 using DiscordPugBotcore.Enums;
-using DiscordPugBotcore.Tests.Util;
 using Xunit;
 using Game = Discord.Game;
 
@@ -82,6 +82,23 @@ namespace DiscordPugBotcore.Tests
             Assert.Equal("John has already joined.",
                 response2.Message);
             Assert.Equal(1, _service.PlayerPool.Count);
+        }
+
+        [Fact]
+        public void ShouldAllowCaptainEligibility()
+        {
+            for (var i = 0; i < 5; i++)
+            {
+                _service.AddPlayer(new PugPlayer(UserStub.Generate(), true));
+                Assert.True(_service.PlayerPool.Count == i+1);
+            }
+//            while (!_service.HasMinimumPlayers)
+//            {
+//                _service.AddPlayer(new PugPlayer(UserStub.Generate(), false));
+//            }
+            Assert.True(_service.PlayerPool.Count > 0);
+            Assert.True(_service.HasEnoughEligibleCaptains);
+            Assert.True(_service.PlayersNeeded <= 0);
         }
     }
 
