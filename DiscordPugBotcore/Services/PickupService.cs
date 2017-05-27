@@ -101,7 +101,19 @@ namespace DiscordPugBotcore.Services
                 
             
             return PickupResponse.Good($"{user.Username} has been picked by {captain.Username} to Team {this.Captains.GetPlayer(captain).TeamId}");
-         }
+        }
+
+        public PickupStatus Status()
+        {
+            if (this.PlayerPool.Count == 0)
+                return BuildPickupStatus(PickupResponse.Good(
+                    "No players in player pool. Type **!join** to be added to the player pool."
+                ));
+            
+            return BuildPickupStatus(PickupResponse.Good(this.FormattedPlayersNeeded()));
+        }
+        
+        
 
         private void SelectCaptains(bool enoughEligibleCaptains)
         {
@@ -142,12 +154,23 @@ namespace DiscordPugBotcore.Services
             this.PickingCaptain = this.Team1.Captain;
         }
 
+        private PickupStatus BuildPickupStatus(PickupResponse puResponse)
+        {
+            return new PickupStatus(
+                this.PickupState,
+                this._minimumPlayers,
+                this.Captains,
+                this.PlayerPool,
+                puResponse
+                );
+        }
+
 //        public void Repick() => this.PlayerPool.AddRange(this.CurrentGame.PopAll());
 
-        public string Status() => $"Status: {this.PickupState} - {this.FormattedPlayerNumbers()}";
+//        public string Status() => $"Status: {this.PickupState} - {this.FormattedPlayerNumbers()}";
 
         public string FormattedPlayerNumbers() => $"[{this.PlayerPool.Count}/{this._minimumPlayers}]";
 
-        public string FormattedPlayersNeeded() => this.HasMinimumPlayers ? string.Empty : $"{this.PlayersNeeded} more players needed.";
+        public string FormattedPlayersNeeded() => this.HasMinimumPlayers ? string.Empty : $"Need {this.PlayersNeeded} more players.";
     }
 }

@@ -5,6 +5,7 @@ using Discord.Commands;
 using DiscordPugBotcore.Entities;
 using DiscordPugBotcore.Enums;
 using DiscordPugBotcore.Services;
+using DiscordPugBotcore.Utility;
 
 namespace DiscordPugBotcore.Commands
 {
@@ -33,24 +34,21 @@ namespace DiscordPugBotcore.Commands
             await ReplyAsync(response.Message);
         }
         
-        [Command("list"), Summary("List players in pool")]
+        [Command("status"), Summary("Show information about current pickup game")]
+        [Alias("list")]
         public async Task List()
         {
-            var playerList = _pickupService.PlayerPool
-                .Select(p => p.ToString())
-                .ToList();
-
-            await ReplyAsync(
-                playerList.Count <= 0
-                    ? "_No players in player pool. Type **!join** to be added to the player pool._"
-                    : $"Player Pool {_pickupService.FormattedPlayerNumbers()}: {string.Join(",", playerList)}"
-            );
+            var response = _pickupService.Status();
+            if (response.PlayerPool.Count == 0)
+                await ReplyAsync(response.PickupResponse.Message);
+            else
+                await ReplyAsync("", embed: new PickupStatusBuilder(response).Build());
         }
         
-        [Command("status"), Summary("Status of Pug")]
-        public async Task Status()
-        {
-            await ReplyAsync($"Status: {PickupState.Gathering}, {_pickupService.FormattedPlayersNeeded()}");
-        }
+//        [Command("status"), Summary("Status of Pug")]
+//        public async Task Status()
+//        {
+//            await ReplyAsync($"Status: {PickupState.Gathering}, {_pickupService.FormattedPlayersNeeded()}");
+//        }
     }
 }

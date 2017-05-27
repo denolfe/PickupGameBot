@@ -12,7 +12,7 @@ namespace DiscordPugBotcore.Entities
         {
             Success = success;
             Message = message;
-            PrettyConsole.Log(LogSeverity.Info, "Bot", message);
+            PrettyConsole.Log(LogSeverity.Info, "Response", message);
         }
         
         public static PickupResponse Bad(string message) => new PickupResponse(false, message);

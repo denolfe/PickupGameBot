@@ -16,7 +16,10 @@ namespace DiscordPugBotcore.Tests
 {
     public class PickupServiceTests
     {
+#pragma warning disable 649
         private IServiceProvider _provider;
+#pragma warning restore 649
+        
         private PickupService _service;
         private Random _rand;
         
@@ -38,7 +41,7 @@ namespace DiscordPugBotcore.Tests
             var user = UserStub.Generate(new Random());
             var response = _service.AddPlayer(new PugPlayer(user, true));
             
-            Assert.Equal(true, response.Success);
+            Assert.True(response.Success);
             Assert.Equal(1, _service.PlayerPool.Count);
         }
 
@@ -195,6 +198,10 @@ namespace DiscordPugBotcore.Tests
             // Picking captain should change to 2
             Assert.Equal(2, _service.PickingCaptain.TeamId);
         }
-        
+
+        [Fact (Skip = "Pending")]
+        public void ShouldReturnDetailedResponseToStatus()
+        {
+        }
     }
 }
