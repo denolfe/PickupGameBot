@@ -96,13 +96,69 @@ namespace DiscordPugBotcore.Tests
         public void ShouldAllowCaptainEligibility()
         {
             var playerList = PugPlayerStub.GeneratePlayers(5, 5, _rand);
-            foreach (var player in playerList)
-                _service.AddPlayer(player);
+            playerList.ForEach(p => _service.AddPlayer(p));
 
-            Assert.Equal(_service.PlayerPool.Count, 10);
-            Assert.Equal(_service.PlayerPool.Count(p => p.WantsCaptain), 5);
+            Assert.Equal(10, _service.PlayerPool.Count);
+            Assert.Equal(5, _service.PlayerPool.Count(p => p.WantsCaptain));
             Assert.True(_service.HasEnoughEligibleCaptains);
             Assert.True(_service.PlayersNeeded <= 0);
         }
+
+        [Fact]
+        public void ShouldNotAllowStartIfNotEnoughPlayers()
+        {
+            var playerList = PugPlayerStub.GeneratePlayers(5, 4, _rand);
+            playerList.ForEach(p => _service.AddPlayer(p));
+
+            var response = _service.StartPicking();
+            
+            Assert.False(response.Success);
+            Assert.Equal($"Not enough players in pool {_service.FormattedPlayerNumbers()}." +
+                         $" {_service.FormattedPlayersNeeded()}", response.Message);
+        }
+        
+        [Fact]
+        public void ShouldSelectTwoCaptains()
+        {
+            var playerList = PugPlayerStub.GeneratePlayers(5, 5, _rand);
+            playerList.ForEach(p => _service.AddPlayer(p));
+            Assert.True(_service.HasEnoughEligibleCaptains);
+            
+            var response = _service.StartPicking();
+            Assert.True(response.Success);
+            Assert.True(_service.HasCorrectCaptains);
+            Assert.NotEqual(_service.PickingCaptain, null);
+            Assert.Equal(8, _service.PlayerPool.Count);
+        }
+
+        [Fact]
+        public void ShouldRandomlySelectCaptainsIfNotEnough()
+        {
+            var playerList = PugPlayerStub.GeneratePlayers(0, 10, _rand);
+            playerList.ForEach(p => _service.AddPlayer(p));
+            Assert.False(_service.HasEnoughEligibleCaptains);
+            
+            var response = _service.StartPicking();
+            Assert.True(response.Success);
+            Assert.True(_service.HasCorrectCaptains);
+            Assert.NotEqual(_service.PickingCaptain, null);
+            Assert.Equal(8, _service.PlayerPool.Count);
+        }
+
+//        [Fact]
+//        public void ShouldAssignCaptainsToTeams()
+//        {
+//            var playerList = PugPlayerStub.GeneratePlayers(5, 5, _rand);
+//            playerList.ForEach(p => _service.AddPlayer(p));
+//
+//            var response = _service.StartPicking();
+//            Assert.True(response.Success);
+//            
+//            Assert.Equal(1, _service.Captains.Count(c => c.TeamId == 1));
+//            Assert.Equal(1, _service.Captains.Count(c => c.TeamId == 2));
+//
+//            _service.CurrentGame.Teams.TryGetValue(1, out Team Team1);
+//            Assert.Equal(1, Team1?.Id);
+//        }
     }
 }

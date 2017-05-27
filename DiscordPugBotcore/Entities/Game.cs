@@ -8,20 +8,28 @@ namespace DiscordPugBotcore.Entities
     {
         public Dictionary<int, Team> Teams;
 
+        public Game()
+        {
+            this.Teams = new Dictionary<int, Team>();
+        }
+
+        public void CreateTeams(List<PugPlayer> captains)
+        {
+            foreach (var captain in captains)
+            {
+                this.Teams.Add(captain.TeamId, new Team(captain.TeamId));
+                if (this.Teams.ContainsKey(captain.TeamId))
+                {
+                    this.Teams[captain.TeamId].AddPlayer(captain);
+                }
+            }
+        }
+        
         public void AddToCaptainsTeam(PugPlayer captain, PugPlayer player)
         {
             this.Teams[captain.TeamId].AddPlayer(player);
         }
 
-        public Game()
-        {
-            Teams = new Dictionary<int, Team>
-            {
-                { 1, new Team(1) },
-                { 2, new Team(2) }
-            };
-        }
-        
         public List<PugPlayer> PopAll()
         {
             var allPickedPlayers = new List<PugPlayer>();

@@ -10,9 +10,9 @@ namespace DiscordPugBotcore.Entities
 {
     public class PickupService
     {
-        public Game _currentGame;
-        private Team PickingTeam;
-        private PugPlayer PickingCaptain;
+        public Game CurrentGame;
+        public Team PickingTeam;
+        public PugPlayer PickingCaptain = null;
         private int _minimumPlayers = 10;
         private readonly IServiceProvider _provider;
         
@@ -25,14 +25,14 @@ namespace DiscordPugBotcore.Entities
         
         public bool HasMinimumPlayers => this.PlayerPool.Count >= this._minimumPlayers;
         public bool HasEnoughEligibleCaptains => this.PlayerPool.Count(p => p.WantsCaptain) >= 2;
-        public bool HasCorrectCaptains => this.PlayerPool.Select(p => p.IsCaptain).ToList().Count == 2;
+        public bool HasCorrectCaptains => this.Captains.Count == 2;
         public int PlayersNeeded => this._minimumPlayers - this.PlayerPool.Count;
 
         public PickupService(IServiceProvider provider, int minimumPlayers = 10)
         {
             this._provider = provider;
             this._minimumPlayers = minimumPlayers;
-            this._currentGame = new Game();
+            this.CurrentGame = new Game();
             this.PickupState = PickupState.Gathering;
             this.PlayerPool = new List<PugPlayer>();
         }
@@ -48,11 +48,9 @@ namespace DiscordPugBotcore.Entities
                 return PickupResponse.Bad(
                     $"Not enough players in pool {this.FormattedPlayerNumbers()}. {this.FormattedPlayersNeeded()}");
 
-//            if (!this.HasEnoughEligibleCaptains)
-//                return PickupResponse.Bad($"Not enough captains in pool {this.FormattedPlayerNumbers()}");
-            
             this.PickupState = PickupState.Captains;
-            this.SelectCaptains();
+            
+            this.SelectCaptains(this.HasEnoughEligibleCaptains);
             this.AssignCaptains();
             PrettyConsole.Log(LogSeverity.Debug, "Bot", "Assigned Captains");
             
@@ -91,17 +89,32 @@ namespace DiscordPugBotcore.Entities
             if (!this.Captains.ContainsPlayer(captain))
                 return PickupResponse.Bad($"{captain.Username} is not a captain!");   
 
-            _currentGame.AddToCaptainsTeam(this.Captains.GetPlayer(captain), this.PlayerPool.GetPlayer(user));
+            CurrentGame.AddToCaptainsTeam(this.Captains.GetPlayer(captain), this.PlayerPool.GetPlayer(user));
 
             return !this.PlayerPool.ContainsPlayer(user) 
                 ? PickupResponse.Bad($"{user.Username} is not in the player pool") 
                 : PickupResponse.Good($"{user.Username} has been picked by {captain.Username}");
          }
 
-        private void SelectCaptains()
+        private void SelectCaptains(bool enoughEligibleCaptains)
         {
-            // Select 2 that have WantsCaptain flag at random
-            this.Captains = this.PlayerPool.SelectCaptains();
+            if (enoughEligibleCaptains)
+            {
+                // Select 2 players that have WantsCaptain flag at random
+                this.Captains = this.PlayerPool
+                    .Where(p => p.WantsCaptain)
+                    .OrderBy(x => Guid.NewGuid())
+                    .Take(2)
+                    .ToList();
+            }
+            else
+            {
+                // Select 2 players at random
+                this.Captains = this.PlayerPool
+                    .OrderBy(x => Guid.NewGuid())
+                    .Take(2)
+                    .ToList();
+            }
             
             // Set IsCaptain flag
             this.Captains.ForEach(p => p.SetCaptain());
@@ -114,11 +127,12 @@ namespace DiscordPugBotcore.Entities
         private void AssignCaptains()
         {
             this.Captains.ElementAt(0).TeamId = 1;
-//            this.Captains.ElementAt(1).TeamId = 2;
+            this.Captains.ElementAt(1).TeamId = 2;
+//            this.CurrentGame.CreateTeams(this.Captains);
             this.PickingCaptain = this.Captains.ElementAt(0);
         }
 
-        public void Repick() => this.PlayerPool.AddRange(this._currentGame.PopAll());
+        public void Repick() => this.PlayerPool.AddRange(this.CurrentGame.PopAll());
 
         public string Status() => $"Status: {this.PickupState} - {this.FormattedPlayerNumbers()}";
 

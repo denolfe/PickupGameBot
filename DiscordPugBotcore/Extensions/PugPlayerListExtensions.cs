@@ -74,19 +74,19 @@ namespace DiscordPugBotcore.Extensions
             return playerList.Where(p => p.User.Id != user.Id).ToList();
         }
         
-        /// <summary>
-        /// Returns list with 2 captains selected at random that had WantsCaptain flag
-        /// </summary>
-        /// <param name="playerList"></param>
-        /// <returns></returns>
-        public static List<PugPlayer> SelectCaptains(this List<PugPlayer> playerList)
-        {
-            return playerList
-                .Where(p => p.WantsCaptain)
-                .OrderBy(x => Guid.NewGuid())
-                .Take(2)
-                .ToList();
-        }
+//        /// <summary>
+//        /// Returns list with 2 captains selected at random that had WantsCaptain flag
+//        /// </summary>
+//        /// <param name="playerList"></param>
+//        /// <returns></returns>
+//        public static List<PugPlayer> SelectCaptains(this List<PugPlayer> playerList)
+//        {
+//            return playerList
+//                .Where(p => p.WantsCaptain)
+//                .OrderBy(x => Guid.NewGuid())
+//                .Take(2)
+//                .ToList();
+//        }
 
         /// <summary>
         /// Formats List&lt;PugPlayer&gt;
