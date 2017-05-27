@@ -13,7 +13,7 @@ namespace DiscordPugBotcore.Utility
         public PickupStatusBuilder(PickupStatus status)
         {
             _builder = new EmbedBuilder()
-                .WithColor(new Color(44,47,51))
+                .WithColor(new Color(0,255,0))
                 .WithDescription($"_> {status.PickupResponse.Message}_");
 
             if (status.State == PickupState.Picking)
