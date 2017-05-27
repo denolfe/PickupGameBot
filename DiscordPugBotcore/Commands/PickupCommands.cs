@@ -17,7 +17,7 @@ namespace DiscordPugBotcore.Commands
         [Command("gather"), Summary("Set state to gather")]
         public async Task Gather()
         {
-            _pickupService.Gather();
+//            _pickupService.Gather();
             await ReplyAsync($"Players can now !join");
         }
         

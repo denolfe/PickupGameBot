@@ -18,10 +18,7 @@ namespace DiscordPugBotcore.Entities
             foreach (var captain in captains)
             {
                 this.Teams.Add(captain.TeamId, new Team(captain.TeamId));
-                if (this.Teams.ContainsKey(captain.TeamId))
-                {
-                    this.Teams[captain.TeamId].AddPlayer(captain);
-                }
+                this.Teams[captain.TeamId].AddPlayer(captain);
             }
         }
         

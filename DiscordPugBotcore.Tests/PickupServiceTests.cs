@@ -127,7 +127,7 @@ namespace DiscordPugBotcore.Tests
             var response = _service.StartPicking();
             Assert.True(response.Success);
             Assert.True(_service.HasCorrectCaptains);
-            Assert.NotEqual(_service.PickingCaptain, null);
+            Assert.NotEqual(null, _service.PickingCaptain);
             Assert.Equal(8, _service.PlayerPool.Count);
         }
 
@@ -141,24 +141,27 @@ namespace DiscordPugBotcore.Tests
             var response = _service.StartPicking();
             Assert.True(response.Success);
             Assert.True(_service.HasCorrectCaptains);
-            Assert.NotEqual(_service.PickingCaptain, null);
+            Assert.NotEqual(null, _service.PickingCaptain);
             Assert.Equal(8, _service.PlayerPool.Count);
         }
 
-//        [Fact]
-//        public void ShouldAssignCaptainsToTeams()
-//        {
-//            var playerList = PugPlayerStub.GeneratePlayers(5, 5, _rand);
-//            playerList.ForEach(p => _service.AddPlayer(p));
-//
-//            var response = _service.StartPicking();
-//            Assert.True(response.Success);
-//            
-//            Assert.Equal(1, _service.Captains.Count(c => c.TeamId == 1));
-//            Assert.Equal(1, _service.Captains.Count(c => c.TeamId == 2));
-//
-//            _service.CurrentGame.Teams.TryGetValue(1, out Team Team1);
-//            Assert.Equal(1, Team1?.Id);
-//        }
+        [Fact]
+        public void ShouldAssignCaptainsToTeams()
+        {
+            var playerList = PugPlayerStub.GeneratePlayers(5, 5, _rand);
+            playerList.ForEach(p => _service.AddPlayer(p));
+
+            var response = _service.StartPicking();
+            Assert.True(response.Success);
+            
+            Assert.Equal(1, _service.Captains.Count(c => c.TeamId == 1));
+            Assert.Equal(1, _service.Captains.Count(c => c.TeamId == 2));
+
+            Assert.Equal(1, _service.Team1.Captain.TeamId);
+            Assert.Equal(2, _service.Team2.Captain.TeamId);
+            
+            Assert.Equal(1, _service.Team1.Id);
+            Assert.Equal(2, _service.Team2.Id);
+        }
     }
 }

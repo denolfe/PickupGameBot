@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using Discord;
 using DiscordPugBotcore.Enums;
@@ -10,8 +11,11 @@ namespace DiscordPugBotcore.Entities
 {
     public class PickupService
     {
-        public Game CurrentGame;
+//        public Game CurrentGame;
         public Team PickingTeam;
+
+        public Team Team1;
+        public Team Team2;
         public PugPlayer PickingCaptain = null;
         private int _minimumPlayers = 10;
         private readonly IServiceProvider _provider;
@@ -20,8 +24,6 @@ namespace DiscordPugBotcore.Entities
         public List<PugPlayer> PlayerPool { get; set; }
         public List<PugPlayer> Subs { get; set; }
         public PickupState PickupState;
-        
-//        public List<PugPlayer> Captains => this.PlayerPool.Where(p => p.IsCaptain).ToList();
         
         public bool HasMinimumPlayers => this.PlayerPool.Count >= this._minimumPlayers;
         public bool HasEnoughEligibleCaptains => this.PlayerPool.Count(p => p.WantsCaptain) >= 2;
@@ -32,16 +34,10 @@ namespace DiscordPugBotcore.Entities
         {
             this._provider = provider;
             this._minimumPlayers = minimumPlayers;
-            this.CurrentGame = new Game();
             this.PickupState = PickupState.Gathering;
             this.PlayerPool = new List<PugPlayer>();
         }
 
-        public void Gather()
-        {
-            PickupState = PickupState.Gathering;
-        }
-        
         public PickupResponse StartPicking()
         {
             if (!this.HasMinimumPlayers)
@@ -89,11 +85,18 @@ namespace DiscordPugBotcore.Entities
             if (!this.Captains.ContainsPlayer(captain))
                 return PickupResponse.Bad($"{captain.Username} is not a captain!");   
 
-            CurrentGame.AddToCaptainsTeam(this.Captains.GetPlayer(captain), this.PlayerPool.GetPlayer(user));
+            if (this.Captains.GetPlayer(captain).TeamId != PickingCaptain.TeamId)
+                return PickupResponse.Bad($"It is not {captain.Username}'s pick!");
 
-            return !this.PlayerPool.ContainsPlayer(user) 
-                ? PickupResponse.Bad($"{user.Username} is not in the player pool") 
-                : PickupResponse.Good($"{user.Username} has been picked by {captain.Username}");
+            if (!this.PlayerPool.ContainsPlayer(user))
+                PickupResponse.Bad($"{user.Username} is not in the player pool");
+
+            if (PickingCaptain.TeamId == 1)
+                this.Team1.AddPlayer(this.PlayerPool.GetPlayer(user));
+            else
+                this.Team2.AddPlayer(this.PlayerPool.GetPlayer(user));
+            
+            return PickupResponse.Good($"{user.Username} has been picked by {captain.Username} to Team {this.Captains.GetPlayer(captain).TeamId}");
          }
 
         private void SelectCaptains(bool enoughEligibleCaptains)
@@ -126,13 +129,17 @@ namespace DiscordPugBotcore.Entities
         
         private void AssignCaptains()
         {
+            var captain1 = this.Captains.ElementAt(0);
+            var captain2 = this.Captains.ElementAt(1);
             this.Captains.ElementAt(0).TeamId = 1;
             this.Captains.ElementAt(1).TeamId = 2;
+            this.Team1 = new Team(1, captain1);
+            this.Team2 = new Team(2, captain2);
 //            this.CurrentGame.CreateTeams(this.Captains);
-            this.PickingCaptain = this.Captains.ElementAt(0);
+            this.PickingCaptain = this.Team1.Captain;
         }
 
-        public void Repick() => this.PlayerPool.AddRange(this.CurrentGame.PopAll());
+//        public void Repick() => this.PlayerPool.AddRange(this.CurrentGame.PopAll());
 
         public string Status() => $"Status: {this.PickupState} - {this.FormattedPlayerNumbers()}";
 

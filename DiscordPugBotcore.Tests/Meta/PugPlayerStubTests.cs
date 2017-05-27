@@ -36,14 +36,14 @@ namespace DiscordPugBotcore.Tests.Meta
         public void PugPlayerStubShouldDeclareCaptainEligibility()
         {
             var player1 = PugPlayerStub.EligibleCaptain(_rand);
-            Assert.Equal(true, player1.WantsCaptain);
+            Assert.True(player1.WantsCaptain);
         }
         
         [Fact]
         public void PugPlayerStubShouldDeclareNormalPlayersNotEligibleForCaptain()
         {
             var player1 = PugPlayerStub.NormalPlayer(_rand);
-            Assert.Equal(false, player1.WantsCaptain);
+            Assert.False(player1.WantsCaptain);
         }
 
         [Fact]

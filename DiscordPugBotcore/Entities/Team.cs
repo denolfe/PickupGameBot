@@ -19,11 +19,6 @@ namespace DiscordPugBotcore.Entities
             this.Captain = captain;
         }
 
-        public void SetCaptain(PugPlayer captain)
-        {
-            this.Captain = captain;
-        }
-
         public void AddPlayer(PugPlayer player) => this.Players.Add(player);
     }
 }
