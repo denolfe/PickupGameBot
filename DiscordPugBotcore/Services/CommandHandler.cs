@@ -17,12 +17,14 @@ namespace DiscordPugBotcore.Services
         private readonly DiscordSocketClient _client;
         private readonly CommandService _commands;
         private readonly IServiceProvider _provider;
+        private readonly Configuration _config;
 
         public CommandHandler(IServiceProvider provider)
         {
             _provider = provider;
             _client = _provider.GetService<DiscordSocketClient>();
             _commands = _provider.GetService<CommandService>();
+            _config = _provider.GetService<Configuration>();
         }
 
         public async Task StartAsync()
@@ -42,6 +44,9 @@ namespace DiscordPugBotcore.Services
 
         private async Task HandleCommandAsync(SocketMessage s)
         {
+            if (_config.ChannelWhitelist.All(id => id != s.Channel.Id))
+                return;
+            
             var timer = new Stopwatch();
             timer.Start();
 

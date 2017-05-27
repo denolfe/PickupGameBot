@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using Discord;
 using Newtonsoft.Json;
@@ -13,6 +14,7 @@ namespace DiscordPugBotcore.Utility
         public int RelatedTagsLimit { get; set; } = 3;
         public AuthTokens Token { get; set; } = new AuthTokens();
         public CustomSearchConfig CustomSearch { get; set; } = new CustomSearchConfig();
+        public List<ulong> ChannelWhitelist { get; set; }
         
         public Configuration() : this("Config/config.json") { }
         public Configuration(string fileName)
