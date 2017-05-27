@@ -154,14 +154,42 @@ namespace DiscordPugBotcore.Tests
             var response = _service.StartPicking();
             Assert.True(response.Success);
             
+            // Only 1 captain per team
             Assert.Equal(1, _service.Captains.Count(c => c.TeamId == 1));
             Assert.Equal(1, _service.Captains.Count(c => c.TeamId == 2));
 
+            // Each captain has a Team Id
             Assert.Equal(1, _service.Team1.Captain.TeamId);
             Assert.Equal(2, _service.Team2.Captain.TeamId);
             
+            // Each team has Id
             Assert.Equal(1, _service.Team1.Id);
             Assert.Equal(2, _service.Team2.Id);
+            
+            // Team 1 picks first
+            Assert.Equal(1, _service.PickingCaptain.TeamId);
         }
+        
+        [Fact]
+        public void ShouldBeAbleToPickPlayersToTeam()
+        {
+            var playerList = PugPlayerStub.GeneratePlayers(5, 5, _rand);
+            playerList.ForEach(p => _service.AddPlayer(p));
+
+            var response = _service.StartPicking();
+            Assert.True(response.Success);
+            
+            var randomPlayerInPool = _service.PlayerPool.OrderBy(x => Guid.NewGuid()).Take(1).FirstOrDefault();
+
+            var pickResponse = _service.PickPlayer(_service.PickingCaptain.User, randomPlayerInPool.User);
+            Assert.True(pickResponse.Success);
+            
+            // Confirm player was added to team
+            Assert.Equal(1, _service.Team1.Players.Count);
+            
+            // Picking captain should change to 2
+            Assert.Equal(2, _service.PickingCaptain.TeamId);
+        }
+        
     }
 }

@@ -5,7 +5,7 @@ namespace DiscordPugBotcore.Entities
     public class Team
     {
         public int Id { get; set; }
-        public List<PugPlayer> Players { get; set; }
+        public List<PugPlayer> Players { get; set; } = new List<PugPlayer>();
         public PugPlayer Captain { get; set; }
 
         public Team(int id)

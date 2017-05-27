@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using System.Reflection;
 using Discord;
 using DiscordPugBotcore.Enums;
 using DiscordPugBotcore.Extensions;
@@ -11,9 +12,6 @@ namespace DiscordPugBotcore.Entities
 {
     public class PickupService
     {
-//        public Game CurrentGame;
-        public Team PickingTeam;
-
         public Team Team1;
         public Team Team2;
         public PugPlayer PickingCaptain = null;
@@ -91,10 +89,18 @@ namespace DiscordPugBotcore.Entities
             if (!this.PlayerPool.ContainsPlayer(user))
                 PickupResponse.Bad($"{user.Username} is not in the player pool");
 
-            if (PickingCaptain.TeamId == 1)
-                this.Team1.AddPlayer(this.PlayerPool.GetPlayer(user));
+            var playerFromUser = this.PlayerPool.GetPlayer(user);
+            if (this.PickingCaptain.TeamId == 1)
+            {
+                this.Team1.AddPlayer(playerFromUser);
+                this.PickingCaptain = this.Team2.Captain;
+            }
             else
-                this.Team2.AddPlayer(this.PlayerPool.GetPlayer(user));
+            {
+                this.Team2.AddPlayer(playerFromUser);
+                this.PickingCaptain = this.Team1.Captain;
+            }
+                
             
             return PickupResponse.Good($"{user.Username} has been picked by {captain.Username} to Team {this.Captains.GetPlayer(captain).TeamId}");
          }
