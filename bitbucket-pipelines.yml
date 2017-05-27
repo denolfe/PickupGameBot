@@ -1,0 +1,11 @@
+image: microsoft/dotnet
+
+pipelines:
+  default:
+    - step:
+        script:
+          - dotnet restore
+          - dotnet build DiscordPugBotcore
+    - step:
+        script:
+          - dotnet test DiscordPugBotcore.Tests/DiscordPugBotcore.Tests.csproj
