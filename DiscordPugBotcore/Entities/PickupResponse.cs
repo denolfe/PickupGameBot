@@ -1,3 +1,6 @@
+using Discord;
+using DiscordPugBotcore.Utility;
+
 namespace DiscordPugBotcore.Entities
 {
     public class PickupResponse
@@ -9,6 +12,7 @@ namespace DiscordPugBotcore.Entities
         {
             Success = success;
             Message = message;
+            PrettyConsole.Log(LogSeverity.Info, "Bot", message);
         }
         
         public static PickupResponse Bad(string message) => new PickupResponse(false, message);

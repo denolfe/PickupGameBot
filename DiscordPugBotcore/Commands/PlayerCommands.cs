@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Discord.Commands;
 using DiscordPugBotcore.Entities;
 using DiscordPugBotcore.Enums;
+using DiscordPugBotcore.Services;
 
 namespace DiscordPugBotcore.Commands
 {

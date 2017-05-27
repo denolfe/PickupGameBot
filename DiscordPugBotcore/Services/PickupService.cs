@@ -1,14 +1,13 @@
 using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using System.Linq;
-using System.Reflection;
 using Discord;
+using DiscordPugBotcore.Entities;
 using DiscordPugBotcore.Enums;
 using DiscordPugBotcore.Extensions;
 using DiscordPugBotcore.Utility;
 
-namespace DiscordPugBotcore.Entities
+namespace DiscordPugBotcore.Services
 {
     public class PickupService
     {
@@ -19,9 +18,9 @@ namespace DiscordPugBotcore.Entities
         private readonly IServiceProvider _provider;
         
         public List<PugPlayer> Captains { get; set; }
-        public List<PugPlayer> PlayerPool { get; set; }
+        public List<PugPlayer> PlayerPool { get; set; } = new List<PugPlayer>();
         public List<PugPlayer> Subs { get; set; }
-        public PickupState PickupState;
+        public PickupState PickupState { get; private set; } = PickupState.Gathering;
         
         public bool HasMinimumPlayers => this.PlayerPool.Count >= this._minimumPlayers;
         public bool HasEnoughEligibleCaptains => this.PlayerPool.Count(p => p.WantsCaptain) >= 2;
@@ -32,8 +31,6 @@ namespace DiscordPugBotcore.Entities
         {
             this._provider = provider;
             this._minimumPlayers = minimumPlayers;
-            this.PickupState = PickupState.Gathering;
-            this.PlayerPool = new List<PugPlayer>();
         }
 
         public PickupResponse StartPicking()
@@ -42,15 +39,16 @@ namespace DiscordPugBotcore.Entities
                 return PickupResponse.Bad(
                     $"Not enough players in pool {this.FormattedPlayerNumbers()}. {this.FormattedPlayersNeeded()}");
 
-            this.PickupState = PickupState.Captains;
+            this.PickupState = PickupState.Picking;
             
             this.SelectCaptains(this.HasEnoughEligibleCaptains);
             this.AssignCaptains();
             PrettyConsole.Log(LogSeverity.Debug, "Bot", "Assigned Captains");
-            
+
             var message = "Picking is about to start!\n" +
-                          $"Captains: {this.Captains.ToJoinedList()}" +
-                          $"Captains: {this.PickingCaptain.User.Username} picks first";
+                          $"Captains: {this.Captains.ToJoinedList()}\n" +
+                          $"Player Pool: {string.Join(",", this.PlayerPool.Select(p => p.User.Mention))}\n" +
+                          $"{this.PickingCaptain.User.Username} picks first";
             
             return PickupResponse.Good(message);
         }
@@ -141,7 +139,6 @@ namespace DiscordPugBotcore.Entities
             this.Captains.ElementAt(1).TeamId = 2;
             this.Team1 = new Team(1, captain1);
             this.Team2 = new Team(2, captain2);
-//            this.CurrentGame.CreateTeams(this.Captains);
             this.PickingCaptain = this.Team1.Captain;
         }
 

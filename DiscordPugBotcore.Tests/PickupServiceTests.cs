@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Discord;
 using DiscordPugBotcore.Entities;
 using DiscordPugBotcore.Enums;
+using DiscordPugBotcore.Services;
 using DiscordPugBotcore.Tests.Stubs;
 using DiscordPugBotcore.Tests.Utility;
 using Xunit;
@@ -44,7 +45,7 @@ namespace DiscordPugBotcore.Tests
         [Fact]
         public void ShouldRemovePlayers()
         {
-            var user = UserStub.Generate(new Random());
+            var user = UserStub.Generate(_rand);
             _service.AddPlayer(new PugPlayer(user, true));
             var response = _service.RemovePlayer(user);
 
@@ -55,7 +56,7 @@ namespace DiscordPugBotcore.Tests
         [Fact]
         public void ShouldNotRemoveIfPlayerNotInPool()
         {
-            var user = UserStub.Generate(new Random());
+            var user = UserStub.Generate(_rand);
             var response = _service.RemovePlayer(user);
             
             Assert.False(response.Success);
@@ -66,22 +67,26 @@ namespace DiscordPugBotcore.Tests
         [Fact]
         public void ShouldNotAddPlayerIfNotGathering()
         {
-            _service.PickupState = PickupState.Starting;
-            var random = new Random();
-            var player = PugPlayerStub.NormalPlayer(random);
-            var response = _service.AddPlayer(player);
+            var playerList = PugPlayerStub.GeneratePlayers(5, 5, _rand);
+            playerList.ForEach(p => _service.AddPlayer(p));
+            var pickResponse = _service.StartPicking();
+            Assert.True(pickResponse.Success);
+
+            var latePlayer = PugPlayerStub.NormalPlayer(_rand);
+            var joinResponse = _service.AddPlayer(latePlayer);
             
-            Assert.False(response.Success);
-            Assert.Equal("State: Starting. New players cannot join at this time",
-                response.Message);
-            Assert.Equal(0, _service.PlayerPool.Count);
+            Assert.False(joinResponse.Success);
+            Assert.Equal("State: Picking. New players cannot join at this time",
+                joinResponse.Message);
+            
+            // 10 - 2 captains = 8
+            Assert.Equal(8, _service.PlayerPool.Count);
         }
         
         [Fact]
         public void ShouldNotAddPlayerIfAlreadyJoined()
         {
-            var random = new Random();
-            var user = PugPlayerStub.NormalPlayer(random);
+            var user = PugPlayerStub.NormalPlayer(_rand);
             var response1 = _service.AddPlayer(user);
             Assert.True(response1.Success);
             var response2 = _service.AddPlayer(user);
@@ -116,7 +121,7 @@ namespace DiscordPugBotcore.Tests
             Assert.Equal($"Not enough players in pool {_service.FormattedPlayerNumbers()}." +
                          $" {_service.FormattedPlayersNeeded()}", response.Message);
         }
-        
+
         [Fact]
         public void ShouldSelectTwoCaptains()
         {
