@@ -9,7 +9,7 @@ namespace PickupGameBot.Tests.Stubs
     {
         public ulong Id { get; set; }
         public DateTimeOffset CreatedAt { get; }
-        public string Mention { get; }
+        public string Mention { get; set; }
         public Game? Game { get; }
         public UserStatus Status { get; }
 
@@ -18,6 +18,7 @@ namespace PickupGameBot.Tests.Stubs
             return new UserStub
             {
                 Username = "John",
+                Mention = "@John",
                 Id = rand.NextUInt64()
             };
         }
