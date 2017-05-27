@@ -16,6 +16,14 @@ namespace PickupGameBot.Utility
         public CustomSearchConfig CustomSearch { get; set; } = new CustomSearchConfig();
         public List<ulong> ChannelWhitelist { get; set; }
         
+        public Dictionary<ulong, IEnumerable<ulong>> GuildRoleMap { get; set; } = new Dictionary<ulong, IEnumerable<ulong>>
+        {
+            [104741849960316928] = new ulong[] // Fathom
+            {
+                318139200732135425    // Mod
+            }
+        };
+        
         public Configuration() : this("Config/config.json") { }
         public Configuration(string fileName)
         {
