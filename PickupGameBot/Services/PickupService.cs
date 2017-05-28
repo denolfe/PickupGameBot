@@ -47,7 +47,7 @@ namespace PickupGameBot.Services
 
             var message = "Picking is about to start!\n" +
                           $"Captains: {this.Captains.ToJoinedList()}\n" +
-                          $"Player Pool: {string.Join(",", this.PlayerPool.Select(p => p.User.Mention))}\n" +
+                          $"Player Pool: {string.Join(",", this.PlayerPool.Select(p => p.User.Username))}\n" +
                           $"{this.PickingCaptain.User.Username} picks first";
             
             return PickupResponse.Good(message);
@@ -165,7 +165,30 @@ namespace PickupGameBot.Services
                 );
         }
 
-//        public void Repick() => this.PlayerPool.AddRange(this.CurrentGame.PopAll());
+        public PickupResponse Repick()
+        {
+            this.PlayerPool.AddRange(this.Team1.PopAll());
+            this.PlayerPool.AddRange(this.Team2.PopAll());
+            this.PickingCaptain = this.Team1.Captain;
+            return PickupResponse.Good("Picking has restarted."); 
+        }
+
+        public Tuple<PickupResponse,List<PugPlayer>> Reset()
+        {
+            var currentPool = this.PlayerPool;
+            if (this.Team1?.Captain != null)
+                currentPool.Add(this.Team1.Captain);
+            if (this.Team2?.Captain != null)
+                currentPool.Add(this.Team2.Captain);
+            this.PlayerPool.Clear();
+            this.Team1 = null;
+            this.Team2 = null;
+            this.PickupState = PickupState.Gathering;
+            return Tuple.Create<PickupResponse, List<PugPlayer>>(
+                    PickupResponse.Good("Pickup game has been reset."),
+                    currentPool
+                ); 
+        }
 
 //        public string Status() => $"Status: {this.PickupState} - {this.FormattedPlayerNumbers()}";
 

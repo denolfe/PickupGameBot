@@ -6,9 +6,9 @@ using PickupGameBot.Services;
 using PickupGameBot.Tests.Stubs;
 using Xunit;
 
-namespace PickupGameBot.Tests
+namespace PickupGameBot.Tests.PickupServiceTests
 {
-    public class PickupServiceTests
+    public class PickupServicePlayerTests
     {
 #pragma warning disable 649
         private IServiceProvider _provider;
@@ -17,7 +17,7 @@ namespace PickupGameBot.Tests
         private PickupService _service;
         private Random _rand;
         
-        public PickupServiceTests()
+        public PickupServicePlayerTests()
         {
             _service = new PickupService(_provider);
             _rand = new Random();
@@ -188,12 +188,33 @@ namespace PickupGameBot.Tests
             
             // Confirm player was added to team
             Assert.Equal(1, _service.Team1.Players.Count);
+        }
+
+        [Fact]
+        public void ShouldSwitchPickingCaptainAfterPick()
+        {
+            var playerList = PugPlayerStub.GeneratePlayers(5, 5, _rand);
+            playerList.ForEach(p => _service.AddPlayer(p));
+
+            var response = _service.StartPicking();
+            Assert.True(response.Success);
+            
+            var randomPlayerInPool = _service.PlayerPool.OrderBy(x => Guid.NewGuid()).Take(1).FirstOrDefault();
+
+            var firstPickingCaptain = _service.PickingCaptain.User;
+            var pickResponse = _service.PickPlayer(firstPickingCaptain, randomPlayerInPool.User);
+            Assert.True(pickResponse.Success);
             
             // Picking captain should change to 2
             Assert.Equal(2, _service.PickingCaptain.TeamId);
+            
+            var randomPlayerInPool2 = _service.PlayerPool.OrderBy(x => Guid.NewGuid()).Take(1).FirstOrDefault();
+            var pickResponse2 = _service.PickPlayer(_service.PickingCaptain.User, randomPlayerInPool2.User);
+            Assert.True(pickResponse2.Success);
+            Assert.Equal(1, _service.Team2.Players.Count);
         }
 
-        [Fact (Skip = "Pending")]
+        [Fact (Skip="Pending")]
         public void ShouldReturnDetailedResponseToStatus()
         {
         }

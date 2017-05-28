@@ -1,12 +1,25 @@
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Discord;
 using Discord.Commands;
+using PickupGameBot.Entities;
+using PickupGameBot.Preconditions;
+using PickupGameBot.Services;
 
 namespace PickupGameBot.Commands
 {
+    [ElevatedUserPrecondition.RequireElevatedUserAttribute]
     [Group("admin")]
     public class AdminCommands : ModuleBase
     {
+        private readonly PickupService _pickupService;
+
+        public AdminCommands(PickupService pickupService)
+        {
+            _pickupService = pickupService;
+        }
+        
         [Command("add"), Summary("Force add player")]
         public async Task ForceAdd([Remainder, Summary("The user to force add")] IUser user)
         {
@@ -32,15 +45,18 @@ namespace PickupGameBot.Commands
         [Command("repick"), Summary("Go back to gather state")]
         public async Task Repick()
         {
-            //TODO: Remove captains, set state to Gather
-            await ReplyAsync($"{this.Context.Client.CurrentUser.Username} is now in gathering state");
+            var response = _pickupService.Repick();
+            await ReplyAsync(response.Message);
         }
         
         [Command("reset"), Summary("Go back to gather state and clear player pool")]
         public async Task Reset()
         {
             //TODO: Remove captains, Mention all players in pool, clear player pool, set state to Gather
-            await ReplyAsync($"All players have been removed, {this.Context.Client.CurrentUser.Username} is now in gathering state");
+            var response = _pickupService.Reset();
+            var mentionString = string.Join(",", response.Item2.Select(p => p.User.Mention));
+            
+            await ReplyAsync(response.Item1.Message + $"\n{mentionString}");
         }
         
         [Command("pause"), Summary("Pauses the bot")]

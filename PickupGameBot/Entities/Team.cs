@@ -20,5 +20,12 @@ namespace PickupGameBot.Entities
         }
 
         public void AddPlayer(PugPlayer player) => this.Players.Add(player);
+
+        public List<PugPlayer> PopAll()
+        {
+            var players = this.Players;
+            this.Players.Clear();
+            return players;
+        }
     }
 }
