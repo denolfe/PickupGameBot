@@ -15,6 +15,7 @@ namespace PickupGameBot.Services
         public Team Team2;
         public PugPlayer PickingCaptain = null;
         private int _minimumPlayers = 10;
+        private int _pickNumber = 1;
         private readonly IServiceProvider _provider;
         
         public List<PugPlayer> Captains { get; set; }
@@ -100,26 +101,6 @@ namespace PickupGameBot.Services
                                        $"{this.PickingCaptain.User.Username}'s Pick");
         }
 
-        private void SetNextCaptain()
-        {
-            // TODO: Can probably simplify this by using a pick map and using pick numbers
-            var pickingCaptainId = this.PickingCaptain.TeamId;
-
-            if (this.Team1.Players.Count == 1)
-            {
-                this.PickingCaptain = 
-                    new List<int> {0, 1}.Contains(this.Team2.Players.Count) 
-                        ? this.Team2.Captain 
-                        : this.Team1.Captain;
-                return;
-            }
-
-            this.PickingCaptain = 
-                pickingCaptainId == 1 
-                    ? this.Team2.Captain 
-                    : this.Team1.Captain;
-        }
-
         public PickupStatus Status()
         {
             if (this.PlayerPool.Count == 0)
@@ -169,6 +150,29 @@ namespace PickupGameBot.Services
             this.Team1 = new Team(1, captain1);
             this.Team2 = new Team(2, captain2);
             this.PickingCaptain = this.Team1.Captain;
+        }
+        
+        private void SetNextCaptain()
+        {
+            _pickNumber++;
+            var pickMap = new Dictionary<int, int>
+            {
+                {1, 1}, // Should never happen, set initially
+                {2, 2},
+                {3, 2},
+                {4, 1},
+                {5, 2},
+                {6, 1},
+                {7, 2},
+                {8, 1},
+                {9, 2},
+                {10, 1}
+            };
+
+            this.PickingCaptain =
+                pickMap[_pickNumber] == 1
+                    ? this.Team1.Captain
+                    : this.Team2.Captain;
         }
 
         private PickupStatus BuildPickupStatus(PickupResponse puResponse)
