@@ -28,7 +28,13 @@ namespace PickupGameBot.Services
         public bool HasCorrectCaptains => this.Captains.Count == 2;
         public int PlayersNeeded => this._minimumPlayers - this.PlayerPool.Count;
 
-        public bool BothTeamsAreFull => this.Team1.IsFull() && this.Team2.IsFull(); 
+        public bool BothTeamsAreFull()
+        {
+            if (this.Team1 == null || this.Team2 == null)
+                return false;
+            
+            return this.Team1.IsFull() && this.Team2.IsFull();
+        }
 
         public PickupService(IServiceProvider provider, int minimumPlayers = 10)
         {
@@ -96,7 +102,7 @@ namespace PickupGameBot.Services
                 return BuildPickupStatus(PickupResponse.Bad($"{user.Username} is not in the player pool"));
 
             // Should be caught by PickupState check, but worth having
-            if (BothTeamsAreFull)
+            if (BothTeamsAreFull())
                 return BuildPickupStatus(PickupResponse.Bad("Teams are full, you cannot pick any more players."));
             
             var playerFromUser = this.PlayerPool.GetPlayer(user);
@@ -106,7 +112,7 @@ namespace PickupGameBot.Services
                 this.Team2.AddPlayer(playerFromUser);
             
             // Check if full after the pick
-            if (BothTeamsAreFull)
+            if (BothTeamsAreFull())
             {
                 // TODO: take a look at how states are used. This somehow needs to set back to gather!
                 this.PickupState = PickupState.Starting;
@@ -208,7 +214,7 @@ namespace PickupGameBot.Services
                 this.PlayerPool,
                 this.Team1,
                 this.Team2,
-                this.BothTeamsAreFull,
+                this.BothTeamsAreFull(),
                 puResponse
                 );
         }
