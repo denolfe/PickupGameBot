@@ -188,29 +188,29 @@ namespace PickupGameBot.Tests.PickupServiceTests
             Assert.Equal(1, _service.Team1.Players.Count);
         }
 
-        [Fact]
-        public void ShouldSwitchPickingCaptainAfterPick()
-        {
-            var playerList = PugPlayerStub.GeneratePlayers(5, 5);
-            playerList.ForEach(p => _service.AddPlayer(p));
-
-            var response = _service.StartPicking();
-            Assert.True(response.Success);
-            
-            var randomPlayerInPool = _service.PlayerPool.OrderBy(x => Guid.NewGuid()).Take(1).FirstOrDefault();
-
-            var firstPickingCaptain = _service.PickingCaptain.User;
-            var pickResponse = _service.PickPlayer(firstPickingCaptain, randomPlayerInPool.User);
-            Assert.True(pickResponse.Success);
-            
-            // Picking captain should change to 2
-            Assert.Equal(2, _service.PickingCaptain.TeamId);
-            
-            var randomPlayerInPool2 = _service.PlayerPool.OrderBy(x => Guid.NewGuid()).Take(1).FirstOrDefault();
-            var pickResponse2 = _service.PickPlayer(_service.PickingCaptain.User, randomPlayerInPool2.User);
-            Assert.True(pickResponse2.Success);
-            Assert.Equal(1, _service.Team2.Players.Count);
-        }
+//        [Fact]
+//        public void ShouldSwitchPickingCaptainAfterPick()
+//        {
+//            var playerList = PugPlayerStub.GeneratePlayers(5, 5);
+//            playerList.ForEach(p => _service.AddPlayer(p));
+//
+//            var response = _service.StartPicking();
+//            Assert.True(response.Success);
+//            
+//            var randomPlayerInPool = _service.PlayerPool.OrderBy(x => Guid.NewGuid()).Take(1).FirstOrDefault();
+//
+//            var firstPickingCaptain = _service.PickingCaptain.User;
+//            var pickResponse = _service.PickPlayer(firstPickingCaptain, randomPlayerInPool.User);
+//            Assert.True(pickResponse.Success);
+//            
+//            // Picking captain should change to 2
+//            Assert.Equal(2, _service.PickingCaptain.TeamId);
+//            
+//            var randomPlayerInPool2 = _service.PlayerPool.OrderBy(x => Guid.NewGuid()).Take(1).FirstOrDefault();
+//            var pickResponse2 = _service.PickPlayer(_service.PickingCaptain.User, randomPlayerInPool2.User);
+//            Assert.True(pickResponse2.Success);
+//            Assert.Equal(1, _service.Team2.Players.Count);
+//        }
 
         [Fact (Skip="Pending")]
         public void ShouldReturnDetailedResponseToStatus()

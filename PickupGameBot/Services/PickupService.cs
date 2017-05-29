@@ -89,18 +89,34 @@ namespace PickupGameBot.Services
 
             var playerFromUser = this.PlayerPool.GetPlayer(user);
             if (this.PickingCaptain.TeamId == 1)
-            {
                 this.Team1.AddPlayer(playerFromUser);
-                this.PickingCaptain = this.Team2.Captain;
-            }
             else
-            {
                 this.Team2.AddPlayer(playerFromUser);
-                this.PickingCaptain = this.Team1.Captain;
-            }
+            
+            SetNextCaptain();
                 
             
             return PickupResponse.Good($"{user.Username} has been picked by {captain.Username} to Team {this.Captains.GetPlayer(captain).TeamId}");
+        }
+
+        private void SetNextCaptain()
+        {
+            // TODO: Can probably simplify this by using a pick map and using pick numbers
+            var pickingCaptainId = this.PickingCaptain.TeamId;
+
+            if (this.Team1.Players.Count == 1)
+            {
+                this.PickingCaptain = 
+                    new List<int> {0, 1}.Contains(this.Team2.Players.Count) 
+                        ? this.Team2.Captain 
+                        : this.Team1.Captain;
+                return;
+            }
+
+            this.PickingCaptain = 
+                pickingCaptainId == 1 
+                    ? this.Team2.Captain 
+                    : this.Team1.Captain;
         }
 
         public PickupStatus Status()
