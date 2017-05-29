@@ -94,9 +94,10 @@ namespace PickupGameBot.Services
                 this.Team2.AddPlayer(playerFromUser);
             
             SetNextCaptain();
-                
             
-            return PickupResponse.Good($"{user.Username} has been picked by {captain.Username} to Team {this.Captains.GetPlayer(captain).TeamId}");
+            return PickupResponse.Good($"{user.Username} has been picked by {captain.Username}" +
+                                       $" to Team {this.Captains.GetPlayer(captain).TeamId}\n" +
+                                       $"{this.PickingCaptain.User.Username}'s Pick");
         }
 
         private void SetNextCaptain()
