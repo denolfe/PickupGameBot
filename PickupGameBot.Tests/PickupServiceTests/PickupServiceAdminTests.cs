@@ -43,11 +43,11 @@ namespace PickupGameBot.Tests.PickupServiceTests
 
             var firstPickingCaptain = _service.PickingCaptain.User;
             var pickResponse = _service.PickPlayer(firstPickingCaptain, randomPlayerInPool.User);
-            Assert.True(pickResponse.Success);
+            Assert.True(pickResponse.PickupResponse.Success);
             
             var randomPlayerInPool2 = _service.PlayerPool.OrderBy(x => Guid.NewGuid()).Take(1).FirstOrDefault();
             var pickResponse2 = _service.PickPlayer(_service.PickingCaptain.User, randomPlayerInPool2.User);
-            Assert.True(pickResponse2.Success);
+            Assert.True(pickResponse2.PickupResponse.Success);
 
             var repickResponse = _service.Repick();
             Assert.True(repickResponse.Success);

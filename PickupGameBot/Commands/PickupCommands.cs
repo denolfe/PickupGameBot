@@ -2,7 +2,9 @@ using System.Threading.Tasks;
 using Discord;
 using Discord.Commands;
 using PickupGameBot.Entities;
+using PickupGameBot.Enums;
 using PickupGameBot.Services;
+using PickupGameBot.Utility;
 
 namespace PickupGameBot.Commands
 {
@@ -37,7 +39,12 @@ namespace PickupGameBot.Commands
         public async Task PickPlayer([Remainder] IUser user)
         {
             var response = _pickupService.PickPlayer(this.Context.User, user);
-            await ReplyAsync(response.Message);
+            
+            if (response.State == PickupState.Starting
+                && response.BothTeamsAreFull)
+                await ReplyAsync("", embed: new PickupStatusBuilder(response).Build());
+            else
+                await ReplyAsync(response.PickupResponse.Message);
         }
     }
 }

@@ -182,7 +182,7 @@ namespace PickupGameBot.Tests.PickupServiceTests
             var randomPlayerInPool = _service.PlayerPool.OrderBy(x => Guid.NewGuid()).Take(1).FirstOrDefault();
 
             var pickResponse = _service.PickPlayer(_service.PickingCaptain.User, randomPlayerInPool.User);
-            Assert.True(pickResponse.Success);
+            Assert.True(pickResponse.PickupResponse.Success);
             
             // Confirm player was added to team
             Assert.Equal(1, _service.Team1.Players.Count);

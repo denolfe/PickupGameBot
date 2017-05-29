@@ -21,20 +21,20 @@ namespace PickupGameBot.Utility
                 _builder
                     .WithTitle($"Pickup Status: {status.State}");
                 
-                if (status.Team1.Count > 0)
+                if (status.Team1.Players.Count > 0)
                 {
                     _builder
                         .AddField(new EmbedFieldBuilder()
                             .WithName("Team 1")
-                            .WithValue($"[{status.Team1.Count}] {string.Join(",", status.Team1)}"
+                            .WithValue($"[{status.Team1.Players.Count}] {string.Join(",", status.Team1)}"
                             ));    
                 }
-                if (status.Team2.Count > 0)
+                if (status.Team2.Players.Count > 0)
                 {
                     _builder
                         .AddField(new EmbedFieldBuilder()
                             .WithName("Team 2")
-                            .WithValue($"[{status.Team2.Count}] {string.Join(",", status.Team2)}"
+                            .WithValue($"[{status.Team2.Players.Count}] {string.Join(",", status.Team2)}"
                             ));    
                 }
                 _builder.WithFooter(new EmbedFooterBuilder()
