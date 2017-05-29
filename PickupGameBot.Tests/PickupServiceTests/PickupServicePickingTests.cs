@@ -170,5 +170,25 @@ namespace PickupGameBot.Tests.PickupServiceTests
             // Pick 5 should be Captain 2
             Assert.Equal(2, _service.PickingCaptain.TeamId);
         }
+
+        [Fact]
+        public void ShouldNotAllowPickingIfTeamsAreFull()
+        {
+            var playerList = PugPlayerStub.GeneratePlayers(5, 5);
+            playerList.ForEach(p => _service.AddPlayer(p));
+
+            var response = _service.StartPicking();
+            Assert.True(response.Success);
+            
+            for (int i = 1; i <= 10; i++)
+            {
+                var pickingCaptain = _service.PickingCaptain.User;
+                var pickResponse = _service.PickPlayer(pickingCaptain, GetRandomPlayer().User);
+            }
+            
+            var additionalPickAttempt = _service.PickPlayer(_service.PickingCaptain.User, GetRandomPlayer().User);
+            Assert.False(additionalPickAttempt.Success);
+            Assert.Equal("Teams are full, you cannot pick any more players.", additionalPickAttempt.Message);
+        }
     }
 }

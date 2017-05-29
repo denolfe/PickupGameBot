@@ -86,8 +86,11 @@ namespace PickupGameBot.Services
                 return PickupResponse.Bad($"It is not {captain.Username}'s pick!");
 
             if (!this.PlayerPool.ContainsPlayer(user))
-                PickupResponse.Bad($"{user.Username} is not in the player pool");
+                return PickupResponse.Bad($"{user.Username} is not in the player pool");
 
+            if (this.Team1.IsFull() && this.Team2.IsFull())
+                return PickupResponse.Bad($"Teams are full, you cannot pick any more players.");
+            
             var playerFromUser = this.PlayerPool.GetPlayer(user);
             if (this.PickingCaptain.TeamId == 1)
                 this.Team1.AddPlayer(playerFromUser);
@@ -147,13 +150,16 @@ namespace PickupGameBot.Services
             var captain2 = this.Captains.ElementAt(1);
             this.Captains.ElementAt(0).TeamId = 1;
             this.Captains.ElementAt(1).TeamId = 2;
-            this.Team1 = new Team(1, captain1);
-            this.Team2 = new Team(2, captain2);
+            this.Team1 = new Team(1, captain1, _minimumPlayers/2);
+            this.Team2 = new Team(2, captain2, _minimumPlayers/2);
             this.PickingCaptain = this.Team1.Captain;
         }
         
         private void SetNextCaptain()
         {
+            if (_pickNumber >= _minimumPlayers)
+                return;
+            
             _pickNumber++;
             var pickMap = new Dictionary<int, int>
             {
@@ -168,6 +174,9 @@ namespace PickupGameBot.Services
                 {9, 2},
                 {10, 1}
             };
+
+//            int newPickingTeamId;
+//            pickMap.TryGetValue(_pickNumber, out newPickingTeamId);
 
             this.PickingCaptain =
                 pickMap[_pickNumber] == 1
