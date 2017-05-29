@@ -15,12 +15,10 @@ namespace PickupGameBot.Tests.PickupServiceTests
 #pragma warning restore 649
         
         private PickupService _service;
-        private Random _rand;
         
         public PickupServicePlayerTests()
         {
             _service = new PickupService(_provider);
-            _rand = new Random();
         }
         
         [Fact]
@@ -32,7 +30,7 @@ namespace PickupGameBot.Tests.PickupServiceTests
         [Fact]
         public void ShouldAddPlayers()
         {
-            var user = UserStub.Generate(new Random());
+            var user = UserStub.Generate();
             var response = _service.AddPlayer(new PugPlayer(user, true));
             
             Assert.True(response.Success);
@@ -42,7 +40,7 @@ namespace PickupGameBot.Tests.PickupServiceTests
         [Fact]
         public void ShouldRemovePlayers()
         {
-            var user = UserStub.Generate(_rand);
+            var user = UserStub.Generate();
             _service.AddPlayer(new PugPlayer(user, true));
             var response = _service.RemovePlayer(user);
 
@@ -53,23 +51,23 @@ namespace PickupGameBot.Tests.PickupServiceTests
         [Fact]
         public void ShouldNotRemoveIfPlayerNotInPool()
         {
-            var user = UserStub.Generate(_rand);
+            var user = UserStub.Generate();
             var response = _service.RemovePlayer(user);
             
             Assert.False(response.Success);
-            Assert.Equal("John is not in the player list.", response.Message);
+            Assert.Contains("is not in the player list.", response.Message);
             Assert.Equal(0, _service.PlayerPool.Count);
         }
 
         [Fact]
         public void ShouldNotAddPlayerIfNotGathering()
         {
-            var playerList = PugPlayerStub.GeneratePlayers(5, 5, _rand);
+            var playerList = PugPlayerStub.GeneratePlayers(5, 5);
             playerList.ForEach(p => _service.AddPlayer(p));
             var pickResponse = _service.StartPicking();
             Assert.True(pickResponse.Success);
 
-            var latePlayer = PugPlayerStub.NormalPlayer(_rand);
+            var latePlayer = PugPlayerStub.NormalPlayer();
             var joinResponse = _service.AddPlayer(latePlayer);
             
             Assert.False(joinResponse.Success);
@@ -83,13 +81,13 @@ namespace PickupGameBot.Tests.PickupServiceTests
         [Fact]
         public void ShouldNotAddPlayerIfAlreadyJoined()
         {
-            var user = PugPlayerStub.NormalPlayer(_rand);
+            var user = PugPlayerStub.NormalPlayer();
             var response1 = _service.AddPlayer(user);
             Assert.True(response1.Success);
             var response2 = _service.AddPlayer(user);
             
             Assert.False(response2.Success);
-            Assert.Equal("John has already joined.",
+            Assert.Contains("has already joined.",
                 response2.Message);
             Assert.Equal(1, _service.PlayerPool.Count);
         }
@@ -97,7 +95,7 @@ namespace PickupGameBot.Tests.PickupServiceTests
         [Fact]
         public void ShouldAllowCaptainEligibility()
         {
-            var playerList = PugPlayerStub.GeneratePlayers(5, 5, _rand);
+            var playerList = PugPlayerStub.GeneratePlayers(5, 5);
             playerList.ForEach(p => _service.AddPlayer(p));
 
             Assert.Equal(10, _service.PlayerPool.Count);
@@ -109,7 +107,7 @@ namespace PickupGameBot.Tests.PickupServiceTests
         [Fact]
         public void ShouldNotAllowStartIfNotEnoughPlayers()
         {
-            var playerList = PugPlayerStub.GeneratePlayers(5, 4, _rand);
+            var playerList = PugPlayerStub.GeneratePlayers(5, 4);
             playerList.ForEach(p => _service.AddPlayer(p));
 
             var response = _service.StartPicking();
@@ -122,7 +120,7 @@ namespace PickupGameBot.Tests.PickupServiceTests
         [Fact]
         public void ShouldSelectTwoCaptains()
         {
-            var playerList = PugPlayerStub.GeneratePlayers(5, 5, _rand);
+            var playerList = PugPlayerStub.GeneratePlayers(5, 5);
             playerList.ForEach(p => _service.AddPlayer(p));
             Assert.True(_service.HasEnoughEligibleCaptains);
             
@@ -136,7 +134,7 @@ namespace PickupGameBot.Tests.PickupServiceTests
         [Fact]
         public void ShouldRandomlySelectCaptainsIfNotEnough()
         {
-            var playerList = PugPlayerStub.GeneratePlayers(0, 10, _rand);
+            var playerList = PugPlayerStub.GeneratePlayers(0, 10);
             playerList.ForEach(p => _service.AddPlayer(p));
             Assert.False(_service.HasEnoughEligibleCaptains);
             
@@ -150,7 +148,7 @@ namespace PickupGameBot.Tests.PickupServiceTests
         [Fact]
         public void ShouldAssignCaptainsToTeams()
         {
-            var playerList = PugPlayerStub.GeneratePlayers(5, 5, _rand);
+            var playerList = PugPlayerStub.GeneratePlayers(5, 5);
             playerList.ForEach(p => _service.AddPlayer(p));
 
             var response = _service.StartPicking();
@@ -175,7 +173,7 @@ namespace PickupGameBot.Tests.PickupServiceTests
         [Fact]
         public void ShouldBeAbleToPickPlayersToTeam()
         {
-            var playerList = PugPlayerStub.GeneratePlayers(5, 5, _rand);
+            var playerList = PugPlayerStub.GeneratePlayers(5, 5);
             playerList.ForEach(p => _service.AddPlayer(p));
 
             var response = _service.StartPicking();
@@ -193,7 +191,7 @@ namespace PickupGameBot.Tests.PickupServiceTests
         [Fact]
         public void ShouldSwitchPickingCaptainAfterPick()
         {
-            var playerList = PugPlayerStub.GeneratePlayers(5, 5, _rand);
+            var playerList = PugPlayerStub.GeneratePlayers(5, 5);
             playerList.ForEach(p => _service.AddPlayer(p));
 
             var response = _service.StartPicking();

@@ -4,6 +4,9 @@
     <TargetFramework>netcoreapp1.0</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
+    <PackageReference Include="Bogus">
+      <Version>15.0.3</Version>
+    </PackageReference>
     <PackageReference Include="Discord.Net">
       <Version>1.0.0-rc2</Version>
     </PackageReference>
