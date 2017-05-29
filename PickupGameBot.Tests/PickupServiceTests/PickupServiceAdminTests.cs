@@ -13,18 +13,16 @@ namespace PickupGameBot.Tests.PickupServiceTests
 #pragma warning restore 649
         
         private PickupService _service;
-        private Random _rand;
         
         public PickupServiceAdminTests()
         {
             _service = new PickupService(_provider);
-            _rand = new Random();
         }
 
         [Fact]
         public void ResetShouldRemoveAllPlayersFromPool()
         {
-            var playerList = PugPlayerStub.GeneratePlayers(5, 5, _rand);
+            var playerList = PugPlayerStub.GeneratePlayers(5, 5);
             playerList.ForEach(p => _service.AddPlayer(p));
 
             var response = _service.Reset();
@@ -35,7 +33,7 @@ namespace PickupGameBot.Tests.PickupServiceTests
         [Fact]
         public void RepickShouldRemoveAllPlayersFromTeams()
         {
-            var playerList = PugPlayerStub.GeneratePlayers(5, 5, _rand);
+            var playerList = PugPlayerStub.GeneratePlayers(5, 5);
             playerList.ForEach(p => _service.AddPlayer(p));
 
             var response = _service.StartPicking();

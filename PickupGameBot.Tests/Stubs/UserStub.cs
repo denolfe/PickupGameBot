@@ -1,5 +1,6 @@
 using System;
 using System.Threading.Tasks;
+using Bogus;
 using Discord;
 using PickupGameBot.Tests.Utility;
 
@@ -13,14 +14,26 @@ namespace PickupGameBot.Tests.Stubs
         public Game? Game { get; }
         public UserStatus Status { get; }
 
+        public static UserStub Generate()
+        {
+            var rand = new Random();
+            return UserStub.Generate(rand);
+        }
+        
         public static UserStub Generate(Random rand)
         {
-            return new UserStub
-            {
-                Username = "John",
-                Mention = "@John",
-                Id = rand.NextUInt64()
-            };
+            var user = new Faker<UserStub>()
+                .RuleFor(u => u.Username, f => f.Name.FirstName())
+                .RuleFor(u => u.Id, f => rand.NextUInt64());
+
+            return user.Generate();
+
+//            return new UserStub
+//            {
+//                Username = "John",
+//                Mention = "@John",
+//                Id = rand.NextUInt64()
+//            };
         }
         
         public string GetAvatarUrl(ImageFormat format = ImageFormat.Auto, ushort size = 128)
