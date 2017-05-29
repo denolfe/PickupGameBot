@@ -11,11 +11,9 @@ namespace PickupGameBot.Tests.Stubs
         public static PugPlayer NormalPlayer(Random rand) => new PugPlayer(UserStub.Generate(rand), false);
         public static PugPlayer NormalPlayer() => new PugPlayer(UserStub.Generate(), false);
 
-        public static List<PugPlayer> GeneratePlayers(int captains, int normal)
-        {
-            return PugPlayerStub.GeneratePlayers(captains, normal, new Random());
-        }
-        
+        public static List<PugPlayer> GeneratePlayers(int captains, int normal) 
+            => PugPlayerStub.GeneratePlayers(captains, normal, new Random());
+
         public static List<PugPlayer> GeneratePlayers(int captains, int normal, Random rand) 
         {
             var playerList = new List<PugPlayer>();
