@@ -23,7 +23,7 @@ namespace PickupGameBot.Commands
         public async Task Join([Remainder] string captain = null)
         {
             var response = _pickupService.AddPlayer(new PugPlayer(this.Context.User, captain?.Trim().ToLower() == "captain"));
-            await ReplyAsync(response.Message);
+            await ReplyAsync("", embed: new PickupStatusBuilder(response).Build());
         }
 
         [Command("leave"), Summary("Remove player from player pool")]
@@ -44,11 +44,5 @@ namespace PickupGameBot.Commands
             else
                 await ReplyAsync("", embed: new PickupStatusBuilder(response).Build());
         }
-        
-//        [Command("status"), Summary("Status of Pug")]
-//        public async Task Status()
-//        {
-//            await ReplyAsync($"Status: {PickupState.Gathering}, {_pickupService.FormattedPlayersNeeded()}");
-//        }
     }
 }

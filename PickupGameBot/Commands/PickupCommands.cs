@@ -28,11 +28,7 @@ namespace PickupGameBot.Commands
         public async Task StartPicking()
         {
             var response = _pickupService.StartPicking();
-            //TODO: Check players and at least 2 eligible captains
-            //TODO: Choose captains
-            //TODO: Set GameState
-            //TODO: Notify all players in pool
-            await ReplyAsync(response.Message);
+            await ReplyAsync("", embed: new PickupStatusBuilder(response).Build());
         }
 
         [Command("pick"), Summary("Pick a certain player for team")]

@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Discord;
 using Discord.Commands;
 using PickupGameBot.Entities;
+using PickupGameBot.Extensions;
 using PickupGameBot.Preconditions;
 using PickupGameBot.Services;
 
@@ -54,9 +55,9 @@ namespace PickupGameBot.Commands
         {
             //TODO: Remove captains, Mention all players in pool, clear player pool, set state to Gather
             var response = _pickupService.Reset();
-            var mentionString = string.Join(",", response.Item2.Select(p => p.User.Mention));
+            var mentionString = response.Item2.ToFormattedList(true);
             
-            await ReplyAsync(response.Item1.Message + $"\n{mentionString}");
+            await ReplyAsync(response.Item1.Message + $"\nNotifying players: {mentionString}");
         }
         
         [Command("pause"), Summary("Pauses the bot")]

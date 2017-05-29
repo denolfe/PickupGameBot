@@ -37,7 +37,7 @@ namespace PickupGameBot.Tests.PickupServiceTests
             playerList.ForEach(p => _service.AddPlayer(p));
 
             var response = _service.StartPicking();
-            Assert.True(response.Success);
+            Assert.True(response.PickupResponse.Success);
             
             var randomPlayerInPool = _service.PlayerPool.OrderBy(x => Guid.NewGuid()).Take(1).FirstOrDefault();
 

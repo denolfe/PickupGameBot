@@ -7,7 +7,7 @@ namespace PickupGameBot.Entities
         public int Id { get; set; }
         public List<PugPlayer> Players { get; set; } = new List<PugPlayer>();
         public PugPlayer Captain { get; set; }
-        private int _maxPlayers { get; set; }
+        private int MaxPlayers { get; set; }
 
         public Team(int id)
         {
@@ -18,11 +18,12 @@ namespace PickupGameBot.Entities
         {
             this.Id = id;
             this.Captain = captain;
-            this._maxPlayers = maxPlayers;
+            this.MaxPlayers = maxPlayers;
+            this.Players.Add(captain);
         }
 
         public void AddPlayer(PugPlayer player) => this.Players.Add(player);
-        public bool IsFull() => this.Players.Count == this._maxPlayers;
+        public bool IsFull() => this.Players.Count == this.MaxPlayers;
 
         public List<PugPlayer> PopAll()
         {

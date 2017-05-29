@@ -22,8 +22,8 @@ namespace PickupGameBot.Entities
 
         public override string ToString()
         {
-            var wantsCaptainFlag = WantsCaptain ? "*" : string.Empty;
-            return $"{User.Username}{wantsCaptainFlag}";
+            var captainFlag = WantsCaptain || IsCaptain ? "*" : string.Empty;
+            return $"{User.Username}{captainFlag}";
         }
     }
 }

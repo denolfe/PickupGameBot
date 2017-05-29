@@ -73,31 +73,20 @@ namespace PickupGameBot.Extensions
         {
             return playerList.Where(p => p.User.Id != user.Id).ToList();
         }
-        
-//        /// <summary>
-//        /// Returns list with 2 captains selected at random that had WantsCaptain flag
-//        /// </summary>
-//        /// <param name="playerList"></param>
-//        /// <returns></returns>
-//        public static List<PugPlayer> SelectCaptains(this List<PugPlayer> playerList)
-//        {
-//            return playerList
-//                .Where(p => p.WantsCaptain)
-//                .OrderBy(x => Guid.NewGuid())
-//                .Take(2)
-//                .ToList();
-//        }
 
         /// <summary>
-        /// Formats List&lt;PugPlayer&gt;
+        /// 
         /// </summary>
         /// <param name="playerList"></param>
+        /// <param name="mention"></param>
         /// <returns></returns>
-        public static string ToJoinedList(this List<PugPlayer> playerList)
+        public static string ToFormattedList(this List<PugPlayer> playerList, bool mention = false)
         {
-            var nameList = playerList.Select(p => p.User.Username);
-            return string.Join(",", nameList);
+            var nameList = mention 
+                ? playerList.Select(p => p.User.Mention).ToList() 
+                : playerList.Select(p => p.ToString()).ToList();
+
+            return string.Join(", ", nameList);
         }
-        
     }
 }

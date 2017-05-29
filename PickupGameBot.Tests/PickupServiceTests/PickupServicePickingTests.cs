@@ -31,7 +31,7 @@ namespace PickupGameBot.Tests.PickupServiceTests
             playerList.ForEach(p => _service.AddPlayer(p));
 
             var response = _service.StartPicking();
-            Assert.True(response.Success);
+            Assert.True(response.PickupResponse.Success);
             
             var firstPickingCaptain = _service.PickingCaptain.User;
             Assert.Equal(1, _service.PickingCaptain.TeamId);
@@ -44,7 +44,7 @@ namespace PickupGameBot.Tests.PickupServiceTests
             playerList.ForEach(p => _service.AddPlayer(p));
 
             var response = _service.StartPicking();
-            Assert.True(response.Success);
+            Assert.True(response.PickupResponse.Success);
             
             var firstPickingCaptain = _service.PickingCaptain.User;
             var pickResponse = _service.PickPlayer(firstPickingCaptain, GetRandomPlayer().User);
@@ -55,7 +55,7 @@ namespace PickupGameBot.Tests.PickupServiceTests
             
             var pickResponse2 = _service.PickPlayer(_service.PickingCaptain.User, GetRandomPlayer().User);
             Assert.True(pickResponse2.PickupResponse.Success);
-            Assert.Equal(1, _service.Team2.Players.Count);
+            Assert.Equal(2, _service.Team2.Players.Count);
         }
 
         [Fact]
@@ -65,7 +65,7 @@ namespace PickupGameBot.Tests.PickupServiceTests
             playerList.ForEach(p => _service.AddPlayer(p));
 
             var response = _service.StartPicking();
-            Assert.True(response.Success);
+            Assert.True(response.PickupResponse.Success);
             
             var randomPlayerInPool = GetRandomPlayer();
 
@@ -78,21 +78,21 @@ namespace PickupGameBot.Tests.PickupServiceTests
             
             var pickResponse2 = _service.PickPlayer(_service.PickingCaptain.User, GetRandomPlayer().User);
             Assert.True(pickResponse2.PickupResponse.Success);
-            Assert.Equal(1, _service.Team2.Players.Count);
+            Assert.Equal(2, _service.Team2.Players.Count);
             
             // Pick 3 should be Captain 2 AGAIN
             Assert.Equal(2, _service.PickingCaptain.TeamId);
             
             var pickResponse3 = _service.PickPlayer(_service.PickingCaptain.User, GetRandomPlayer().User);
             Assert.True(pickResponse3.PickupResponse.Success);
-            Assert.Equal(2, _service.Team2.Players.Count);
+            Assert.Equal(3, _service.Team2.Players.Count);
             
             // Pick 4 should be Captain 1
             Assert.Equal(1, _service.PickingCaptain.TeamId);
             
             var pickResponse4 = _service.PickPlayer(_service.PickingCaptain.User, GetRandomPlayer().User);
             Assert.True(pickResponse4.PickupResponse.Success);
-            Assert.Equal(2, _service.Team1.Players.Count);
+            Assert.Equal(3, _service.Team1.Players.Count);
             
             // Pick 5 should be Captain 2
             Assert.Equal(2, _service.PickingCaptain.TeamId);
@@ -105,7 +105,7 @@ namespace PickupGameBot.Tests.PickupServiceTests
             playerList.ForEach(p => _service.AddPlayer(p));
 
             var response = _service.StartPicking();
-            Assert.True(response.Success);
+            Assert.True(response.PickupResponse.Success);
             
             var randomPlayerInPool = GetRandomPlayer();
 
@@ -118,14 +118,14 @@ namespace PickupGameBot.Tests.PickupServiceTests
             
             var pickResponse2 = _service.PickPlayer(_service.PickingCaptain.User, GetRandomPlayer().User);
             Assert.True(pickResponse2.PickupResponse.Success);
-            Assert.Equal(1, _service.Team2.Players.Count);
+            Assert.Equal(2, _service.Team2.Players.Count);
             
             // Pick 3 should be Captain 2 AGAIN
             Assert.Equal(2, _service.PickingCaptain.TeamId);
             
             var pickResponse3 = _service.PickPlayer(_service.PickingCaptain.User, GetRandomPlayer().User);
             Assert.True(pickResponse3.PickupResponse.Success);
-            Assert.Equal(2, _service.Team2.Players.Count);
+            Assert.Equal(3, _service.Team2.Players.Count);
             
             // Pick 4 should be Captain 1
             Assert.Equal(1, _service.PickingCaptain.TeamId);
@@ -138,7 +138,7 @@ namespace PickupGameBot.Tests.PickupServiceTests
             playerList.ForEach(p => _service.AddPlayer(p));
 
             var response = _service.StartPicking();
-            Assert.True(response.Success);
+            Assert.True(response.PickupResponse.Success);
             
             var randomPlayerInPool = GetRandomPlayer();
 
@@ -151,21 +151,21 @@ namespace PickupGameBot.Tests.PickupServiceTests
             
             var pickResponse2 = _service.PickPlayer(_service.PickingCaptain.User, GetRandomPlayer().User);
             Assert.True(pickResponse2.PickupResponse.Success);
-            Assert.Equal(1, _service.Team2.Players.Count);
+            Assert.Equal(2, _service.Team2.Players.Count);
             
             // Pick 3 should be Captain 2 AGAIN
             Assert.Equal(2, _service.PickingCaptain.TeamId);
             
             var pickResponse3 = _service.PickPlayer(_service.PickingCaptain.User, GetRandomPlayer().User);
             Assert.True(pickResponse3.PickupResponse.Success);
-            Assert.Equal(2, _service.Team2.Players.Count);
+            Assert.Equal(3, _service.Team2.Players.Count);
             
             // Pick 4 should be Captain 1
             Assert.Equal(1, _service.PickingCaptain.TeamId);
             
             var pickResponse4 = _service.PickPlayer(_service.PickingCaptain.User, GetRandomPlayer().User);
             Assert.True(pickResponse4.PickupResponse.Success);
-            Assert.Equal(2, _service.Team1.Players.Count);
+            Assert.Equal(3, _service.Team1.Players.Count);
             
             // Pick 5 should be Captain 2
             Assert.Equal(2, _service.PickingCaptain.TeamId);
@@ -178,7 +178,7 @@ namespace PickupGameBot.Tests.PickupServiceTests
             playerList.ForEach(p => _service.AddPlayer(p));
 
             var response = _service.StartPicking();
-            Assert.True(response.Success);
+            Assert.True(response.PickupResponse.Success);
             
             for (int i = 1; i <= 10; i++)
             {

@@ -18,7 +18,7 @@ namespace PickupGameBot.Tests.PickupServiceTests
         
         public PickupServicePlayerTests()
         {
-            _service = new PickupService(_provider);
+            _service = new PickupService(_provider, 10);
         }
         
         [Fact]
@@ -33,7 +33,7 @@ namespace PickupGameBot.Tests.PickupServiceTests
             var user = UserStub.Generate();
             var response = _service.AddPlayer(new PugPlayer(user, true));
             
-            Assert.True(response.Success);
+            Assert.True(response.PickupResponse.Success);
             Assert.Equal(1, _service.PlayerPool.Count);
         }
 
@@ -65,14 +65,14 @@ namespace PickupGameBot.Tests.PickupServiceTests
             var playerList = PugPlayerStub.GeneratePlayers(5, 5);
             playerList.ForEach(p => _service.AddPlayer(p));
             var pickResponse = _service.StartPicking();
-            Assert.True(pickResponse.Success);
+            Assert.True(pickResponse.PickupResponse.Success);
 
             var latePlayer = PugPlayerStub.NormalPlayer();
             var joinResponse = _service.AddPlayer(latePlayer);
             
-            Assert.False(joinResponse.Success);
+            Assert.False(joinResponse.PickupResponse.Success);
             Assert.Equal("State: Picking. New players cannot join at this time",
-                joinResponse.Message);
+                joinResponse.PickupResponse.Message);
             
             // 10 - 2 captains = 8
             Assert.Equal(8, _service.PlayerPool.Count);
@@ -83,12 +83,12 @@ namespace PickupGameBot.Tests.PickupServiceTests
         {
             var user = PugPlayerStub.NormalPlayer();
             var response1 = _service.AddPlayer(user);
-            Assert.True(response1.Success);
+            Assert.True(response1.PickupResponse.Success);
             var response2 = _service.AddPlayer(user);
             
-            Assert.False(response2.Success);
+            Assert.False(response2.PickupResponse.Success);
             Assert.Contains("has already joined.",
-                response2.Message);
+                response2.PickupResponse.Message);
             Assert.Equal(1, _service.PlayerPool.Count);
         }
 
@@ -112,9 +112,9 @@ namespace PickupGameBot.Tests.PickupServiceTests
 
             var response = _service.StartPicking();
             
-            Assert.False(response.Success);
+            Assert.False(response.PickupResponse.Success);
             Assert.Equal($"Not enough players in pool {_service.FormattedPlayerNumbers()}." +
-                         $" {_service.FormattedPlayersNeeded()}", response.Message);
+                         $" {_service.FormattedPlayersNeeded()}", response.PickupResponse.Message);
         }
 
         [Fact]
@@ -125,7 +125,7 @@ namespace PickupGameBot.Tests.PickupServiceTests
             Assert.True(_service.HasEnoughEligibleCaptains);
             
             var response = _service.StartPicking();
-            Assert.True(response.Success);
+            Assert.True(response.PickupResponse.Success);
             Assert.True(_service.HasCorrectCaptains);
             Assert.NotEqual(null, _service.PickingCaptain);
             Assert.Equal(8, _service.PlayerPool.Count);
@@ -139,7 +139,7 @@ namespace PickupGameBot.Tests.PickupServiceTests
             Assert.False(_service.HasEnoughEligibleCaptains);
             
             var response = _service.StartPicking();
-            Assert.True(response.Success);
+            Assert.True(response.PickupResponse.Success);
             Assert.True(_service.HasCorrectCaptains);
             Assert.NotEqual(null, _service.PickingCaptain);
             Assert.Equal(8, _service.PlayerPool.Count);
@@ -152,7 +152,7 @@ namespace PickupGameBot.Tests.PickupServiceTests
             playerList.ForEach(p => _service.AddPlayer(p));
 
             var response = _service.StartPicking();
-            Assert.True(response.Success);
+            Assert.True(response.PickupResponse.Success);
             
             // Only 1 captain per team
             Assert.Equal(1, _service.Captains.Count(c => c.TeamId == 1));
@@ -177,7 +177,7 @@ namespace PickupGameBot.Tests.PickupServiceTests
             playerList.ForEach(p => _service.AddPlayer(p));
 
             var response = _service.StartPicking();
-            Assert.True(response.Success);
+            Assert.True(response.PickupResponse.Success);
             
             var randomPlayerInPool = _service.PlayerPool.OrderBy(x => Guid.NewGuid()).Take(1).FirstOrDefault();
 
@@ -185,7 +185,7 @@ namespace PickupGameBot.Tests.PickupServiceTests
             Assert.True(pickResponse.PickupResponse.Success);
             
             // Confirm player was added to team
-            Assert.Equal(1, _service.Team1.Players.Count);
+            Assert.Equal(2, _service.Team1.Players.Count);
         }
 
 //        [Fact (Skip="Pending")]

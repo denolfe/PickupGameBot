@@ -14,7 +14,7 @@ namespace PickupGameBot.Services
         public Team Team1;
         public Team Team2;
         public PugPlayer PickingCaptain = null;
-        private int _minimumPlayers = 10;
+        private int _minimumPlayers;
         private int _pickNumber = 1;
         private readonly IServiceProvider _provider;
         
@@ -42,40 +42,38 @@ namespace PickupGameBot.Services
             this._minimumPlayers = minimumPlayers;
         }
 
-        public PickupResponse StartPicking()
+        public PickupStatus StartPicking()
         {
             if (!this.HasMinimumPlayers)
-                return PickupResponse.Bad(
-                    $"Not enough players in pool {this.FormattedPlayerNumbers()}. {this.FormattedPlayersNeeded()}");
+                return BuildPickupStatus(PickupResponse.Bad(
+                    $"Not enough players in pool {this.FormattedPlayerNumbers()}. {this.FormattedPlayersNeeded()}"));
 
             this.PickupState = PickupState.Picking;
             
             this.SelectCaptains(this.HasEnoughEligibleCaptains);
             this.AssignCaptains();
-            PrettyConsole.Log(LogSeverity.Debug, "Bot", "Assigned Captains");
 
-            var message = "Picking is about to start!\n" +
-                          $"Captains: {this.Captains.ToJoinedList()}\n" +
-                          $"Player Pool: {string.Join(",", this.PlayerPool.Select(p => p.User.Username))}\n" +
-                          $"{this.PickingCaptain.User.Username} picks first";
-            
-            return PickupResponse.Good(message);
+            return BuildPickupStatus(PickupResponse.Good("Picking is about to start!"));
         }
 
-        public PickupResponse AddPlayer(PugPlayer pugPlayer)
+        public PickupStatus AddPlayer(PugPlayer pugPlayer)
         {
             if (this.PickupState != PickupState.Gathering)
-                return PickupResponse.Bad($"State: {this.PickupState}. New players cannot join at this time");
+                return BuildPickupStatus(PickupResponse.Bad($"State: {this.PickupState}. New players cannot join at this time"));
 
             if (this.PlayerPool.ContainsPlayer(pugPlayer))
-                return PickupResponse.Bad($"{pugPlayer.User.Username} has already joined.");
+                return BuildPickupStatus(PickupResponse.Bad($"{pugPlayer.User.Username} has already joined."));
             
             this.PlayerPool.Add(pugPlayer);
             var captainMessage = pugPlayer.WantsCaptain ? " as eligible captain" : string.Empty;
             
             //TODO: Add conditional if pug is full and start picking
             
-            return PickupResponse.Good($"{pugPlayer.User.Username} joined{captainMessage}.");
+            if (this.PlayerPool.Count == this._minimumPlayers)
+                return BuildPickupStatus(PickupResponse.Good($"{pugPlayer.User.Username} joined{captainMessage}.\n" + 
+                                    "Pickup has enough players to start!"));
+            
+            return BuildPickupStatus(PickupResponse.Good($"{pugPlayer.User.Username} joined{captainMessage}."));
         }
 
         public PickupResponse RemovePlayer(IUser user)
@@ -163,7 +161,11 @@ namespace PickupGameBot.Services
             
             // Remove captains from normal player pool
             foreach (var pugPlayer in this.Captains)
-                this.PlayerPool = this.PlayerPool.RemovePlayer(pugPlayer);
+            {
+                if (this.PlayerPool.ContainsPlayer(pugPlayer))
+                    this.PlayerPool = this.PlayerPool.RemovePlayer(pugPlayer);
+            }
+                
         }
         
         private void AssignCaptains()
@@ -175,6 +177,7 @@ namespace PickupGameBot.Services
             this.Team1 = new Team(1, captain1, _minimumPlayers/2);
             this.Team2 = new Team(2, captain2, _minimumPlayers/2);
             this.PickingCaptain = this.Team1.Captain;
+            PrettyConsole.Log(LogSeverity.Debug, "Bot", $"Assigned Captains: {this.Captains.OrderBy(c => c.TeamId).ToList().ToFormattedList()}");
         }
         
         private void SetNextCaptain()
@@ -234,7 +237,7 @@ namespace PickupGameBot.Services
                 currentPool.Add(this.Team1.Captain);
             if (this.Team2?.Captain != null)
                 currentPool.Add(this.Team2.Captain);
-            this.PlayerPool.Clear();
+            this.PlayerPool = new List<PugPlayer>();
             this.Team1 = null;
             this.Team2 = null;
             this.PickupState = PickupState.Gathering;
