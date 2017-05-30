@@ -47,7 +47,7 @@ namespace PickupGameBot.Commands
         public async Task Repick()
         {
             var response = _pickupService.Repick();
-            await ReplyAsync(response.Message);
+            await ReplyAsync(response.Messages.First());
         }
         
         [Command("reset"), Summary("Go back to gather state and clear player pool")]
@@ -57,7 +57,7 @@ namespace PickupGameBot.Commands
             var response = _pickupService.Reset();
             var mentionString = response.Item2.ToFormattedList(true);
             
-            await ReplyAsync(response.Item1.Message + $"\nNotifying players: {mentionString}");
+            await ReplyAsync(response.Item1.Messages + $"\nNotifying players: {mentionString}");
         }
         
         [Command("pause"), Summary("Pauses the bot")]

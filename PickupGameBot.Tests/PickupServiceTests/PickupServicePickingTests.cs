@@ -188,7 +188,7 @@ namespace PickupGameBot.Tests.PickupServiceTests
             
             var additionalPickAttempt = _service.PickPlayer(_service.PickingCaptain.User, GetRandomPlayer().User);
             Assert.False(additionalPickAttempt.PickupResponse.Success);
-            Assert.Equal("Cannot pick when not in Picking state.", additionalPickAttempt.PickupResponse.Message);
+            Assert.Equal("Cannot pick when not in Picking state.", additionalPickAttempt.PickupResponse.Messages.First());
         }
     }
 }

@@ -12,7 +12,13 @@ namespace PickupGameBot.Commands
     public class PlayerCommands : ModuleBase
     {
         private readonly PickupService _pickupService;
-
+        
+        private Task BuildMessageAsync(PickupStatus response)
+        {
+            return ReplyAsync(string.Join("\n", response.PickupResponse.Messages),
+                embed: new PickupStatusBuilder(response).Build());
+        }
+        
         public PlayerCommands(PickupService pickupService)
         {
             _pickupService = pickupService;
@@ -23,7 +29,7 @@ namespace PickupGameBot.Commands
         public async Task Join([Remainder] string captain = null)
         {
             var response = _pickupService.AddPlayer(new PugPlayer(this.Context.User, captain?.Trim().ToLower() == "captain"));
-            await ReplyAsync("", embed: new PickupStatusBuilder(response).Build());
+            await BuildMessageAsync(response);
         }
 
         [Command("leave"), Summary("Remove player from player pool")]
@@ -31,7 +37,7 @@ namespace PickupGameBot.Commands
         public async Task Leave([Remainder] string captain = null)
         {
             var response = _pickupService.RemovePlayer(this.Context.User);
-            await ReplyAsync(response.Message);
+            await BuildMessageAsync(response);
         }
         
         [Command("status"), Summary("Show information about current pickup game")]
@@ -39,10 +45,7 @@ namespace PickupGameBot.Commands
         public async Task List()
         {
             var response = _pickupService.Status();
-            if (response.PlayerPool.Count == 0)
-                await ReplyAsync(response.PickupResponse.Message);
-            else
-                await ReplyAsync("", embed: new PickupStatusBuilder(response).Build());
+            await BuildMessageAsync(response);
         }
     }
 }

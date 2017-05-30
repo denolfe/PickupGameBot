@@ -15,8 +15,7 @@ namespace PickupGameBot.Utility
         public PickupStatusBuilder(PickupStatus status)
         {
             _builder = new EmbedBuilder()
-                .WithColor(new Color(0,255,0))
-                .WithDescription($"_{status.PickupResponse.Message}_");
+                .WithColor(new Color(0, 255, 0));
 
             if (status.State == PickupState.Picking)
             {
@@ -49,12 +48,10 @@ namespace PickupGameBot.Utility
                     .WithFooter(new EmbedFooterBuilder()
                         .WithText("Commands: !join, !leave, !status"));
             }
-            
-            _builder
-                .AddField(new EmbedFieldBuilder()
-                    .WithName($"Player Pool [{status.PlayerPool.Count}/{status.MinimumPlayers}]")
-                    .WithValue(status.PlayerPool.ToFormattedList())
-                    );
+
+            _builder.WithDescription(status.PlayerPool.Count == 0
+                ? $"Playes [0/{status.MinimumPlayers}]: _No players in the pool_"
+                : $"Players [{status.PlayerPool.Count}/{status.MinimumPlayers}]: {status.PlayerPool.ToFormattedList()}");
         }
     }
 }

@@ -76,13 +76,13 @@ namespace PickupGameBot.Services
             return BuildPickupStatus(PickupResponse.Good($"{pugPlayer.User.Username} joined{captainMessage}."));
         }
 
-        public PickupResponse RemovePlayer(IUser user)
+        public PickupStatus RemovePlayer(IUser user)
         {
             if (!this.PlayerPool.ContainsPlayer(user))
-                return PickupResponse.Bad($"{user.Username} is not in the player list.");
+                return BuildPickupStatus(PickupResponse.Bad($"{user.Username} is not in the player list."));
             
             this.PlayerPool = this.PlayerPool.RemovePlayer(user);
-            return PickupResponse.Good($"{user.Username} successfully removed from list.");
+            return BuildPickupStatus(PickupResponse.Good($"{user.Username} successfully removed from list."));
         }
 
         public PickupStatus PickPlayer(IUser captain, IUser user)

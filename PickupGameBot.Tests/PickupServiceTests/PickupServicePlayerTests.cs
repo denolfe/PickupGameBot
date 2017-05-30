@@ -44,7 +44,7 @@ namespace PickupGameBot.Tests.PickupServiceTests
             _service.AddPlayer(new PugPlayer(user, true));
             var response = _service.RemovePlayer(user);
 
-            Assert.True(response.Success);
+            Assert.True(response.PickupResponse.Success);
             Assert.Equal(0, _service.PlayerPool.Count);
         }
 
@@ -54,8 +54,8 @@ namespace PickupGameBot.Tests.PickupServiceTests
             var user = UserStub.Generate();
             var response = _service.RemovePlayer(user);
             
-            Assert.False(response.Success);
-            Assert.Contains("is not in the player list.", response.Message);
+            Assert.False(response.PickupResponse.Success);
+            Assert.Contains("is not in the player list.", response.PickupResponse.Messages.First());
             Assert.Equal(0, _service.PlayerPool.Count);
         }
 
@@ -72,7 +72,7 @@ namespace PickupGameBot.Tests.PickupServiceTests
             
             Assert.False(joinResponse.PickupResponse.Success);
             Assert.Equal("State: Picking. New players cannot join at this time",
-                joinResponse.PickupResponse.Message);
+                joinResponse.PickupResponse.Messages.First());
             
             // 10 - 2 captains = 8
             Assert.Equal(8, _service.PlayerPool.Count);
@@ -88,7 +88,7 @@ namespace PickupGameBot.Tests.PickupServiceTests
             
             Assert.False(response2.PickupResponse.Success);
             Assert.Contains("has already joined.",
-                response2.PickupResponse.Message);
+                response2.PickupResponse.Messages.First());
             Assert.Equal(1, _service.PlayerPool.Count);
         }
 
@@ -114,7 +114,7 @@ namespace PickupGameBot.Tests.PickupServiceTests
             
             Assert.False(response.PickupResponse.Success);
             Assert.Equal($"Not enough players in pool {_service.FormattedPlayerNumbers()}." +
-                         $" {_service.FormattedPlayersNeeded()}", response.PickupResponse.Message);
+                         $" {_service.FormattedPlayersNeeded()}", response.PickupResponse.Messages.First());
         }
 
         [Fact]

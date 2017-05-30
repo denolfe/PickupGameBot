@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Discord;
 using Discord.Commands;
@@ -11,6 +13,12 @@ namespace PickupGameBot.Commands
     public class PickupCommands : ModuleBase
     {
         private readonly PickupService _pickupService;
+
+        private Task BuildMessageAsync(PickupStatus response)
+        {
+            return ReplyAsync(string.Join("\n", response.PickupResponse.Messages),
+                embed: new PickupStatusBuilder(response).Build());
+        }
         
         public PickupCommands(PickupService pickupService)
         {
@@ -28,19 +36,14 @@ namespace PickupGameBot.Commands
         public async Task StartPicking()
         {
             var response = _pickupService.StartPicking();
-            await ReplyAsync("", embed: new PickupStatusBuilder(response).Build());
+            await BuildMessageAsync(response);
         }
 
         [Command("pick"), Summary("Pick a certain player for team")]
         public async Task PickPlayer([Remainder] IUser user)
         {
             var response = _pickupService.PickPlayer(this.Context.User, user);
-            
-            if (response.State == PickupState.Starting
-                && response.BothTeamsAreFull)
-                await ReplyAsync("", embed: new PickupStatusBuilder(response).Build());
-            else
-                await ReplyAsync(response.PickupResponse.Message);
+            await BuildMessageAsync(response);
         }
     }
 }
