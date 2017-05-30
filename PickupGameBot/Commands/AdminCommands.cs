@@ -7,6 +7,7 @@ using PickupGameBot.Entities;
 using PickupGameBot.Extensions;
 using PickupGameBot.Preconditions;
 using PickupGameBot.Services;
+using PickupGameBot.Utility;
 
 namespace PickupGameBot.Commands
 {
@@ -16,6 +17,12 @@ namespace PickupGameBot.Commands
     {
         private readonly PickupService _pickupService;
 
+        private Task BuildMessageAsync(PickupStatus response)
+        {
+            return ReplyAsync(string.Join("\n", response.PickupResponse.Messages),
+                embed: new PickupStatusBuilder(response).Build());
+        }
+        
         public AdminCommands(PickupService pickupService)
         {
             _pickupService = pickupService;
@@ -24,8 +31,8 @@ namespace PickupGameBot.Commands
         [Command("add"), Summary("Force add player")]
         public async Task ForceAdd([Remainder, Summary("The user to force add")] IUser user)
         {
-            //TODO: Ensure user not already added, then add
-            await ReplyAsync($"{this.Context.User.Username} force added {user.Mention}");
+            var response = _pickupService.AddPlayer(new PugPlayer(this.Context.User, false), true);
+            await BuildMessageAsync(response);
         }
         
         [Command("remove"), Summary("Force add player")]
@@ -47,7 +54,7 @@ namespace PickupGameBot.Commands
         public async Task Repick()
         {
             var response = _pickupService.Repick();
-            await ReplyAsync(response.Messages.First());
+            await BuildMessageAsync(response);
         }
         
         [Command("reset"), Summary("Go back to gather state and clear player pool")]

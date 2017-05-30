@@ -56,7 +56,7 @@ namespace PickupGameBot.Services
             return BuildPickupStatus(PickupResponse.Good("Picking is about to start!"));
         }
 
-        public PickupStatus AddPlayer(PugPlayer pugPlayer)
+        public PickupStatus AddPlayer(PugPlayer pugPlayer, bool admin = false)
         {
             if (this.PickupState != PickupState.Gathering)
                 return BuildPickupStatus(PickupResponse.Bad($"State: {this.PickupState}. New players cannot join at this time"));
@@ -72,8 +72,11 @@ namespace PickupGameBot.Services
             if (this.PlayerPool.Count == this._minimumPlayers)
                 return BuildPickupStatus(PickupResponse.Good($"{pugPlayer.User.Username} joined{captainMessage}.\n" + 
                                     "Pickup has enough players to start!"));
-            
-            return BuildPickupStatus(PickupResponse.Good($"{pugPlayer.User.Username} joined{captainMessage}."));
+
+            return BuildPickupStatus(
+                admin 
+                    ? PickupResponse.Good($"{pugPlayer.User.Username} was force added.") 
+                    : PickupResponse.Good($"{pugPlayer.User.Username} joined{captainMessage}."));
         }
 
         public PickupStatus RemovePlayer(IUser user)
@@ -87,6 +90,12 @@ namespace PickupGameBot.Services
 
         public PickupStatus PickPlayer(IUser captain, IUser user)
         {
+            if (BothTeamsAreFull())
+                return BuildPickupStatus(PickupResponse.Bad("Teams are full, you cannot pick any more players."));
+            
+            if (user == null)
+                return BuildPickupStatus(PickupResponse.Bad("No players left in the pool."));
+            
             if (this.PickupState != PickupState.Picking)
                 return BuildPickupStatus(PickupResponse.Bad("Cannot pick when not in Picking state."));
             
@@ -99,15 +108,14 @@ namespace PickupGameBot.Services
             if (!this.PlayerPool.ContainsPlayer(user))
                 return BuildPickupStatus(PickupResponse.Bad($"{user.Username} is not in the player pool"));
 
-            // Should be caught by PickupState check, but worth having
-            if (BothTeamsAreFull())
-                return BuildPickupStatus(PickupResponse.Bad("Teams are full, you cannot pick any more players."));
-            
             var playerFromUser = this.PlayerPool.GetPlayer(user);
             if (this.PickingCaptain.TeamId == 1)
                 this.Team1.AddPlayer(playerFromUser);
             else
                 this.Team2.AddPlayer(playerFromUser);
+
+            // Remove from Player Pool
+            this.PlayerPool = this.PlayerPool.RemovePlayer(playerFromUser);
             
             // Check if full after the pick
             if (BothTeamsAreFull())
@@ -222,14 +230,30 @@ namespace PickupGameBot.Services
                 );
         }
 
-        public PickupResponse Repick()
+        public PickupStatus Repick()
         {
-            this.PlayerPool.AddRange(this.Team1.PopAll());
-            this.PlayerPool.AddRange(this.Team2.PopAll());
-            this.PickingCaptain = this.Team1.Captain;
-            return PickupResponse.Good("Picking has restarted."); 
+            if (this.PickupState != PickupState.Picking)
+                return BuildPickupStatus(PickupResponse.Bad("Cannot repick when not in Picking state."));
+            
+            
+            if (this.Team1?.Players.Count > 0)
+                this.PlayerPool.AddRange(this.Team1.PopAll());
+            if (this.Team2?.Players.Count > 0)
+                this.PlayerPool.AddRange(this.Team2.PopAll());
+
+            // Remove captains from normal player pool
+            foreach (var pugPlayer in this.Captains)
+            {
+                if (this.PlayerPool.ContainsPlayer(pugPlayer))
+                    this.PlayerPool = this.PlayerPool.RemovePlayer(pugPlayer);
+            }
+            
+            this.PickingCaptain = this.Team1?.Captain;
+
+            return BuildPickupStatus(PickupResponse.Good("Picking has restarted."));
         }
 
+        // TODO: Use PickupStatus as response in tuple
         public Tuple<PickupResponse,List<PugPlayer>> Reset()
         {
             var currentPool = this.PlayerPool;

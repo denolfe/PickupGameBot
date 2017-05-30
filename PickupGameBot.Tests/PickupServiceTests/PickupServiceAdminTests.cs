@@ -16,7 +16,7 @@ namespace PickupGameBot.Tests.PickupServiceTests
         
         public PickupServiceAdminTests()
         {
-            _service = new PickupService(_provider);
+            _service = new PickupService(_provider, 10);
         }
 
         [Fact]
@@ -50,7 +50,7 @@ namespace PickupGameBot.Tests.PickupServiceTests
             Assert.True(pickResponse2.PickupResponse.Success);
 
             var repickResponse = _service.Repick();
-            Assert.True(repickResponse.Success);
+            Assert.True(repickResponse.PickupResponse.Success);
             
             // Picking captain should reset
             Assert.Equal(1, _service.PickingCaptain.TeamId);

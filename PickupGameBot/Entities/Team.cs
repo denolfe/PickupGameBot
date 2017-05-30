@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 
 namespace PickupGameBot.Entities
 {
@@ -27,8 +28,8 @@ namespace PickupGameBot.Entities
 
         public List<PugPlayer> PopAll()
         {
-            var players = this.Players;
-            this.Players.Clear();
+            var players = this.Players.Where(p => !p.IsCaptain).ToList();
+            this.Players = new List<PugPlayer> {this.Captain};
             return players;
         }
     }

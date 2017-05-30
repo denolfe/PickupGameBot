@@ -180,15 +180,15 @@ namespace PickupGameBot.Tests.PickupServiceTests
             var response = _service.StartPicking();
             Assert.True(response.PickupResponse.Success);
             
-            for (int i = 1; i <= 10; i++)
+            for (var i = 1; i <= 8; i++)
             {
                 var pickingCaptain = _service.PickingCaptain.User;
                 var pickResponse = _service.PickPlayer(pickingCaptain, GetRandomPlayer().User);
             }
             
-            var additionalPickAttempt = _service.PickPlayer(_service.PickingCaptain.User, GetRandomPlayer().User);
+            var additionalPickAttempt = _service.PickPlayer(_service.PickingCaptain.User, GetRandomPlayer()?.User);
             Assert.False(additionalPickAttempt.PickupResponse.Success);
-            Assert.Equal("Cannot pick when not in Picking state.", additionalPickAttempt.PickupResponse.Messages.First());
+            Assert.Equal("Teams are full, you cannot pick any more players.", additionalPickAttempt.PickupResponse.Messages.First());
         }
     }
 }
