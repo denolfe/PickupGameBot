@@ -53,7 +53,7 @@ namespace PickupGameBot.Services
             this.SelectCaptains(this.HasEnoughEligibleCaptains);
             this.AssignCaptains();
 
-            return BuildPickupStatus(PickupResponse.Good("Picking is about to start!"));
+            return BuildPickupStatus(PickupResponse.PickingToStart);
         }
 
         public PickupStatus AddPlayer(PugPlayer pugPlayer, bool admin = false)
@@ -62,7 +62,7 @@ namespace PickupGameBot.Services
                 return BuildPickupStatus(PickupResponse.Bad($"State: {this.PickupState}. New players cannot join at this time"));
 
             if (this.PlayerPool.ContainsPlayer(pugPlayer))
-                return BuildPickupStatus(PickupResponse.Bad($"{pugPlayer.User.Username} has already joined."));
+                return BuildPickupStatus(PickupResponse.AlreadyJoined(pugPlayer.User.Username));
             
             this.PlayerPool.Add(pugPlayer);
             var captainMessage = pugPlayer.WantsCaptain ? " as eligible captain" : string.Empty;
@@ -82,31 +82,31 @@ namespace PickupGameBot.Services
         public PickupStatus RemovePlayer(IUser user)
         {
             if (!this.PlayerPool.ContainsPlayer(user))
-                return BuildPickupStatus(PickupResponse.Bad($"{user.Username} is not in the player list."));
+                return BuildPickupStatus(PickupResponse.NotInPlayerList(user.Username));
             
             this.PlayerPool = this.PlayerPool.RemovePlayer(user);
-            return BuildPickupStatus(PickupResponse.Good($"{user.Username} successfully removed from list."));
+            return BuildPickupStatus(PickupResponse.SuccessfullyRemoved(user.Username));
         }
 
         public PickupStatus PickPlayer(IUser captain, IUser user)
         {
             if (BothTeamsAreFull())
-                return BuildPickupStatus(PickupResponse.Bad("Teams are full, you cannot pick any more players."));
+                return BuildPickupStatus(PickupResponse.TeamsFull);
             
             if (user == null)
-                return BuildPickupStatus(PickupResponse.Bad("No players left in the pool."));
+                return BuildPickupStatus(PickupResponse.NoPlayersLeftInPool);
             
             if (this.PickupState != PickupState.Picking)
-                return BuildPickupStatus(PickupResponse.Bad("Cannot pick when not in Picking state."));
+                return BuildPickupStatus(PickupResponse.NotInPickingState);
             
             if (!this.Captains.ContainsPlayer(captain))
-                return BuildPickupStatus(PickupResponse.Bad($"{captain.Username} is not a captain!"));   
+                return BuildPickupStatus(PickupResponse.NotCaptain(captain.Username));   
 
             if (this.Captains.GetPlayer(captain).TeamId != PickingCaptain.TeamId)
-                return BuildPickupStatus(PickupResponse.Bad($"It is not {captain.Username}'s pick!"));
+                return BuildPickupStatus(PickupResponse.NotPick(user.Username));
 
             if (!this.PlayerPool.ContainsPlayer(user))
-                return BuildPickupStatus(PickupResponse.Bad($"{user.Username} is not in the player pool"));
+                return BuildPickupStatus(PickupResponse.NotInPlayerList(user.Username));
 
             var playerFromUser = this.PlayerPool.GetPlayer(user);
             if (this.PickingCaptain.TeamId == 1)
@@ -122,7 +122,7 @@ namespace PickupGameBot.Services
             {
                 // TODO: take a look at how states are used. This somehow needs to set back to gather!
                 this.PickupState = PickupState.Starting;
-                return BuildPickupStatus(PickupResponse.Good("Picking Completed!"));
+                return BuildPickupStatus(PickupResponse.PickingCompleted);
             }
                 
             SetNextCaptain();
@@ -134,15 +134,11 @@ namespace PickupGameBot.Services
 
         public PickupStatus Status()
         {
-            if (this.PlayerPool.Count == 0)
-                return BuildPickupStatus(PickupResponse.Good(
-                    "No players in player pool. Type **!join** to be added to the player pool."
-                ));
-            
-            return BuildPickupStatus(PickupResponse.Good(this.FormattedPlayersNeeded()));
+            return BuildPickupStatus(
+                this.PlayerPool.Count == 0 
+                    ? PickupResponse.NoPlayersInPool 
+                    : PickupResponse.Good(this.FormattedPlayersNeeded()));
         }
-        
-        
 
         private void SelectCaptains(bool enoughEligibleCaptains)
         {
@@ -233,7 +229,7 @@ namespace PickupGameBot.Services
         public PickupStatus Repick()
         {
             if (this.PickupState != PickupState.Picking)
-                return BuildPickupStatus(PickupResponse.Bad("Cannot repick when not in Picking state."));
+                return BuildPickupStatus(PickupResponse.NotInPickingStateRepick);
             
             
             if (this.Team1?.Players.Count > 0)
@@ -250,7 +246,7 @@ namespace PickupGameBot.Services
             
             this.PickingCaptain = this.Team1?.Captain;
 
-            return BuildPickupStatus(PickupResponse.Good("Picking has restarted."));
+            return BuildPickupStatus(PickupResponse.PickingRestarted);
         }
 
         // TODO: Use PickupStatus as response in tuple
@@ -266,7 +262,7 @@ namespace PickupGameBot.Services
             this.Team2 = null;
             this.PickupState = PickupState.Gathering;
             return Tuple.Create<PickupResponse, List<PugPlayer>>(
-                    PickupResponse.Good("Pickup game has been reset."),
+                    PickupResponse.PickupReset,
                     currentPool
                 ); 
         }
