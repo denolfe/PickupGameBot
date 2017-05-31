@@ -45,6 +45,7 @@ namespace PickupGameBot.Services
 
         private async Task HandleCommandAsync(SocketMessage s)
         {
+            // TODO: Phase this out and implement !enable/!disable to add new channels
             if (_config.ChannelWhitelist.All(id => id != s.Channel.Id))
                 return;
             
@@ -75,7 +76,12 @@ namespace PickupGameBot.Services
                     if (result is ExecuteResult r)
                         Console.WriteLine(r.Exception.ToString());
                     else if (result.Error == CommandError.UnknownCommand)
-                        await context.Channel.SendMessageAsync("Command not recognized");
+                    {
+                        await PrettyConsole.LogAsync(LogSeverity.Warning, "Command",
+                            $"Command '{context.Message.Content}' not recognized by {context.Message.Author.Username} in " +
+                            $"{context.Message.Channel}");
+//                        await context.Channel.SendMessageAsync("Command not recognized");
+                    }
                     else
                         await context.Channel.SendMessageAsync(result.ToString());
                 }
