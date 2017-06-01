@@ -1,5 +1,3 @@
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Discord;
 using Discord.Commands;
@@ -9,11 +7,11 @@ using PickupGameBot.Preconditions;
 using PickupGameBot.Services;
 using PickupGameBot.Utility;
 
-namespace PickupGameBot.Commands
+namespace PickupGameBot.Modules
 {
     [ElevatedUserPrecondition.RequireElevatedUserAttribute]
     [Group("admin")]
-    public class AdminCommands : ModuleBase
+    public class AdminModule : ModuleBase
     {
         private readonly PickupService _pickupService;
 
@@ -23,7 +21,7 @@ namespace PickupGameBot.Commands
                 embed: new PickupStatusBuilder(response).Build());
         }
         
-        public AdminCommands(PickupService pickupService)
+        public AdminModule(PickupService pickupService)
         {
             _pickupService = pickupService;
         }
