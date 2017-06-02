@@ -38,7 +38,8 @@ namespace PickupGameBot.Entities
         public static PickupResponse PickingCompleted => new PickupResponse(true, "Picking Completed!");
         public static PickupResponse NoPlayersInPool => new PickupResponse(true, 
             "_No players in player pool. Type **!join** to be added to the player pool._");
-        public static PickupResponse PickingToStart => new PickupResponse(true, "Picking is about to start!");
+        public static PickupResponse PickingToStart(string joinString) 
+            => new PickupResponse(true, $"{joinString}\nPicking is about to start!");
         public static PickupResponse PickingRestarted => new PickupResponse(true, "Picking has restarted.");
         public static PickupResponse PickupReset => new PickupResponse(true, "Pickup game has been reset.");
         public static PickupResponse PickupsEnabled(string channelName) 

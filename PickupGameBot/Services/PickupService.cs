@@ -17,7 +17,7 @@ namespace PickupGameBot.Services
 
         private readonly IServiceProvider _provider;
 
-        private PickupChannel GetPickupChannel(ICommandContext context) 
+        public PickupChannel GetPickupChannel(ICommandContext context) 
             => PickupChannels.FirstOrDefault(c => c.MessageChannel.Id == context.Channel.Id);
 
 
@@ -107,22 +107,16 @@ namespace PickupGameBot.Services
 //            return BuildPickupStatus(PickupResponse.PickingRestarted);
 //        }
 //
-//        // TODO: Use PickupStatus as response in tuple
-//        public Tuple<PickupResponse, List<PugPlayer>> Reset()
-//        {
-//            var currentPool = this.PlayerPool;
-//            if (this.Team1?.Captain != null)
-//                currentPool.Add(this.Team1.Captain);
-//            if (this.Team2?.Captain != null)
-//                currentPool.Add(this.Team2.Captain);
-//            this.PlayerPool = new List<PugPlayer>();
-//            this.Team1 = null;
-//            this.Team2 = null;
-//            this.PickupState = PickupState.Gathering;
-//            return Tuple.Create<PickupResponse, List<PugPlayer>>(
-//                PickupResponse.PickupReset,
-//                currentPool
-//            );
-//        }
+        // TODO: Mention all players that were in pool
+        public PickupResponse Reset(ICommandContext context)
+        {
+            var channel = GetPickupChannel(context);
+            if (channel == null) 
+                return PickupResponse.PickupsWereNotEnabled;
+
+            var response = channel.Reset();
+            
+            return PickupResponse.Good(response.Messages.First());
+        }
     }
 }

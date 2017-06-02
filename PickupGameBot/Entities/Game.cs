@@ -19,8 +19,8 @@ namespace PickupGameBot.Entities
         {
             foreach (var captain in captains)
             {
-                this.Teams.Add(captain.TeamId, new Team(captain.TeamId));
-                this.Teams[captain.TeamId].AddPlayer(captain);
+                this.Teams.Add(captain.TeamId, new Team(captain.TeamId, captain, MinimumPlayers/2));
+//                this.Teams[captain.TeamId].AddPlayer(captain);
             }
         }
         
@@ -32,6 +32,18 @@ namespace PickupGameBot.Entities
         public PugPlayer GetCaptainFromId(int id)
         {
             return Teams[id].Captain;
+        }
+
+        public void RemoveTeams()
+        {
+            Teams = new Dictionary<int, Team>();
+        }
+
+        public List<PugPlayer> Repick()
+        {
+            var players = new List<PugPlayer>();
+            Teams.Select(p => p.Value).ToList().ForEach(t => players.AddRange(t.PopAll()));
+            return players;
         }
         
         public bool BothTeamsAreFull()
