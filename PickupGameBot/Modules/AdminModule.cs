@@ -1,3 +1,5 @@
+using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Discord;
 using Discord.Commands;
@@ -15,68 +17,61 @@ namespace PickupGameBot.Modules
     {
         private readonly PickupService _pickupService;
 
-        private Task BuildMessageAsync(PickupStatus response)
-        {
-            return ReplyAsync(string.Join("\n", response.PickupResponse.Messages),
-                embed: new PickupStatusBuilder(response).Build());
-        }
+//        private Task BuildMessageAsync(PickupStatus response)
+//        {
+//            return ReplyAsync(string.Join("\n", response.PickupResponse.Messages),
+//                embed: new PickupStatusBuilder(response).Build());
+//        }
         
         public AdminModule(PickupService pickupService)
         {
             _pickupService = pickupService;
         }
         
+        [Command("enable"), Summary("Enable pickups in current channel")]
+        public async Task EnablePickups()
+        {
+            var response = _pickupService.EnablePickups(Context);
+            await ReplyAsync(response.Messages.First());
+        }
+        
+        [Command("disable"), Summary("Disable pickups in current channel")]
+        public async Task DisablePickups()
+        {
+            var response = _pickupService.DisablePickups(Context);
+            await ReplyAsync(response.Messages.First());
+        }
+        
         [Command("add"), Summary("Force add player")]
         public async Task ForceAdd([Remainder, Summary("The user to force add")] IUser user)
         {
-            var response = _pickupService.AddPlayer(new PugPlayer(this.Context.User, false), true);
-            await BuildMessageAsync(response);
+            throw new NotImplementedException();
         }
         
         [Command("remove"), Summary("Force add player")]
         [Alias("kick")]
         public async Task ForceRemove([Remainder, Summary("The user to force remove")] IUser user)
         {
-            //TODO: Ensure user is in pool, then remove
-            await ReplyAsync($"{this.Context.User.Username} force removed {user.Mention}");
+            throw new NotImplementedException();
         }
         
         [Command("captain"), Summary("Force set user as a captain")]
         public async Task ForceCaptain([Remainder, Summary("The user to set as captain")] IUser user)
         {
-            //TODO: Ensure user is in pool and is not set as captain, then set as captain
-            await ReplyAsync($"{this.Context.User.Username} force set {user.Mention} as captain");
+            throw new NotImplementedException();
         }
         
         [Command("repick"), Summary("Go back to gather state")]
         public async Task Repick()
         {
-            var response = _pickupService.Repick();
-            await BuildMessageAsync(response);
+            throw new NotImplementedException();
         }
         
         [Command("reset"), Summary("Go back to gather state and clear player pool")]
         public async Task Reset()
         {
             //TODO: Remove captains, Mention all players in pool, clear player pool, set state to Gather
-            var response = _pickupService.Reset();
-            var mentionString = response.Item2.ToFormattedList(true);
-            
-            await ReplyAsync(response.Item1.Messages + $"\nNotifying players: {mentionString}");
-        }
-        
-        [Command("pause"), Summary("Pauses the bot")]
-        public async Task Pause()
-        {
-            //TODO: Pause bot in its current state
-            await ReplyAsync($"{this.Context.Client.CurrentUser.Username} has been paused");
-        }
-        
-        [Command("unpause"), Summary("Unpauses the bot")]
-        public async Task Unpause()
-        {
-            //TODO: Unpause bot and continue
-            await ReplyAsync($"{this.Context.Client.CurrentUser.Username} has been unpaused");
+            throw new NotImplementedException();
         }
     }
 }
