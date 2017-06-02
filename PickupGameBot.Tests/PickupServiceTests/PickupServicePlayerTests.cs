@@ -15,10 +15,12 @@ namespace PickupGameBot.Tests.PickupServiceTests
 #pragma warning restore 649
         
         private PickupService _service;
+        private Random _rand;
         
         public PickupServicePlayerTests()
         {
             _service = new PickupService(_provider, 10);
+            _rand = new Random();
         }
         
         [Fact]
@@ -30,7 +32,7 @@ namespace PickupGameBot.Tests.PickupServiceTests
         [Fact]
         public void ShouldAddPlayers()
         {
-            var user = UserStub.Generate();
+            var user = UserStub.Generate(_rand);
             var response = _service.AddPlayer(new PugPlayer(user, true));
             
             Assert.True(response.PickupResponse.Success);
@@ -40,7 +42,7 @@ namespace PickupGameBot.Tests.PickupServiceTests
         [Fact]
         public void ShouldRemovePlayers()
         {
-            var user = UserStub.Generate();
+            var user = UserStub.Generate(_rand);
             _service.AddPlayer(new PugPlayer(user, true));
             var response = _service.RemovePlayer(user);
 
@@ -51,7 +53,7 @@ namespace PickupGameBot.Tests.PickupServiceTests
         [Fact]
         public void ShouldNotRemoveIfPlayerNotInPool()
         {
-            var user = UserStub.Generate();
+            var user = UserStub.Generate(_rand);
             var response = _service.RemovePlayer(user);
             
             Assert.False(response.PickupResponse.Success);
@@ -67,7 +69,7 @@ namespace PickupGameBot.Tests.PickupServiceTests
             var pickResponse = _service.StartPicking();
             Assert.True(pickResponse.PickupResponse.Success);
 
-            var latePlayer = PugPlayerStub.NormalPlayer();
+            var latePlayer = PugPlayerStub.NormalPlayer(_rand);
             var joinResponse = _service.AddPlayer(latePlayer);
             
             Assert.False(joinResponse.PickupResponse.Success);
@@ -81,7 +83,7 @@ namespace PickupGameBot.Tests.PickupServiceTests
         [Fact]
         public void ShouldNotAddPlayerIfAlreadyJoined()
         {
-            var user = PugPlayerStub.NormalPlayer();
+            var user = PugPlayerStub.NormalPlayer(_rand);
             var response1 = _service.AddPlayer(user);
             Assert.True(response1.PickupResponse.Success);
             var response2 = _service.AddPlayer(user);
