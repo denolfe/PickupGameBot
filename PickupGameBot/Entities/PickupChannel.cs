@@ -80,7 +80,7 @@ namespace PickupGameBot.Entities
                 return PickupResponse.Bad($"State: {PickupState}. Players cannot leave at this time");
             
             PlayerPool = PlayerPool.RemovePlayer(user);
-            return PickupResponse.SuccessfullyRemoved(user.Username);
+            return PickupResponse.RemovedFromList(user.Username);
         }
         
         public PickupResponse PickPlayer(IUser captain, IUser user)

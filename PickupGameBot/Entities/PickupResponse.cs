@@ -33,8 +33,8 @@ namespace PickupGameBot.Entities
         public static PickupResponse Good(List<string> messages) => new PickupResponse(true, messages);
         
         // Good
-        public static PickupResponse SuccessfullyRemoved(string username) => new PickupResponse(true,
-            $"{username} successfully removed from list.");
+        public static PickupResponse RemovedFromList(string username) => new PickupResponse(true,
+            $"{username} removed from list.");
         public static PickupResponse PickingCompleted => new PickupResponse(true, "Picking Completed!");
         public static PickupResponse NoPlayersInPool => new PickupResponse(true, 
             "_No players in player pool. Type **!join** to be added to the player pool._");

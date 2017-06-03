@@ -75,7 +75,7 @@ namespace PickupGameBot.Tests.Tests
             var response1 = _channel.AddPlayerToPool(user, false);
             var response2 = _channel.RemovePlayerFromPool(user);
             Assert.True(response2.Success);
-            Assert.Contains("successfully removed", response2.Messages.First());
+            Assert.Contains("removed", response2.Messages.First());
             Assert.Equal(0, _channel.PlayerPool.Count);
         }
 
