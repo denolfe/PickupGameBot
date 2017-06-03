@@ -19,7 +19,7 @@ namespace PickupGameBot.Entities
         private int _pickNumber = 1;
 
         public bool HasMinimumPlayers => PlayerPool.Count >= CurrentGame.MinimumPlayers;
-        public bool HasEnoughEligibleCaptains => PlayerPool.Where(p => p.WantsCaptain).ToList().Count >= 2;
+        public bool HasEnoughEligibleCaptains => PlayerPool.Count(p => p.WantsCaptain) >= 2 || Captains.Count == 2;
         public int PlayersNeeded => CurrentGame.MinimumPlayers - PlayerPool.Count;
         private string FormattedPlayerNumbers() => $"[{PlayerPool.Count}/{CurrentGame.MinimumPlayers}]";
         private string FormattedPlayersNeeded() => HasMinimumPlayers
@@ -65,11 +65,9 @@ namespace PickupGameBot.Entities
             PlayerPool.Add(pugPlayer);
             var captainMessage = pugPlayer.WantsCaptain ? " as eligible captain" : string.Empty;
 
-            //TODO: Add conditional if pug is full and start picking
-
-            return !HasMinimumPlayers 
-                ? PickupResponse.Good($"{pugPlayer.User.Username} joined{captainMessage}.") 
-                : StartPicking($"{pugPlayer.User.Username} joined{captainMessage}.");
+            return HasMinimumPlayers 
+                ? StartPicking($"{pugPlayer.User.Username} joined{captainMessage}.")
+                : PickupResponse.Good($"{pugPlayer.User.Username} joined{captainMessage}.");
         }
 
         public PickupResponse RemovePlayerFromPool(IUser user)

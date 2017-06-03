@@ -26,6 +26,8 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Meta" />
+    <Folder Include="Stubs" />
+    <Folder Include="Tests" />
     <Folder Include="Utility" />
   </ItemGroup>
 </Project>
