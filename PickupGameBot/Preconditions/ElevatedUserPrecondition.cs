@@ -18,15 +18,20 @@ namespace PickupGameBot.Preconditions
                 if (context.Guild == null)
                     return Task.FromResult(PreconditionResult.FromError("This command may only be run in a guild."));
 
-                var config = map.GetService<Configuration>();
+//                var config = map.GetService<Configuration>();
+//
+//                if (!config.GuildRoleMap.TryGetValue(context.Guild.Id, out IEnumerable<ulong> roles))
+//                    return Task.FromResult(PreconditionResult.FromError("This guild does not have a whitelist."));
 
-                if (!config.GuildRoleMap.TryGetValue(context.Guild.Id, out IEnumerable<ulong> roles))
-                    return Task.FromResult(PreconditionResult.FromError("This guild does not have a whitelist."));
-
-                if (!(context.User as SocketGuildUser).Roles.Any(id => roles.Contains(id.Id)))
-                    return Task.FromResult(PreconditionResult.FromError("You do not have a whitelisted role."));
-
-                return Task.FromResult(PreconditionResult.FromSuccess());
+                // TODO: Ability to add and store whitelisted roles
+                var socketGuildUser = context.User as SocketGuildUser;
+                return Task.FromResult(
+                    socketGuildUser != null && !socketGuildUser.GetPermissions(context.Channel as SocketGuildChannel).ManageChannel 
+                        ? PreconditionResult.FromError("You do not have permissions to manage this channel.") 
+                        : PreconditionResult.FromSuccess());
+                
+//                if (!(context.User as SocketGuildUser).Roles.Any(id => roles.Contains(id.Id)))
+//                    return Task.FromResult(PreconditionResult.FromError("You do not have a whitelisted role."));
             }
         }
     }
