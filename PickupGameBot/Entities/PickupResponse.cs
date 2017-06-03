@@ -37,10 +37,15 @@ namespace PickupGameBot.Entities
             $"{username} successfully removed from list.");
         public static PickupResponse PickingCompleted => new PickupResponse(true, "Picking Completed!");
         public static PickupResponse NoPlayersInPool => new PickupResponse(true, 
-            "No players in player pool. Type **!join** to be added to the player pool.");
-        public static PickupResponse PickingToStart => new PickupResponse(true, "Picking is about to start!");
+            "_No players in player pool. Type **!join** to be added to the player pool._");
+        public static PickupResponse PickingToStart(string joinString) 
+            => new PickupResponse(true, $"{joinString}\nPicking is about to start!");
         public static PickupResponse PickingRestarted => new PickupResponse(true, "Picking has restarted.");
         public static PickupResponse PickupReset => new PickupResponse(true, "Pickup game has been reset.");
+        public static PickupResponse PickupsEnabled(string channelName) 
+            => new PickupResponse(true, $"Pickups enabled for #{channelName}");
+        public static PickupResponse PickupsDisabled(string channelName) 
+            => new PickupResponse(true, $"Pickups were disabled for #{channelName}");
         
         // Bad
         public static PickupResponse NotInPlayerList(string username) => new PickupResponse(false,
@@ -60,5 +65,11 @@ namespace PickupGameBot.Entities
             $"It is not {username}'s pick!");
         public static PickupResponse AlreadyJoined(string username) => new PickupResponse(false,
             $"{username} has already joined.");
+        public static PickupResponse NoPickupsForChannel => new PickupResponse(false, 
+            "No pickups found for this channel. An admin must type **!admin enable** to start pickups.");
+        public static PickupResponse PickupsWereNotEnabled => new PickupResponse(false,
+            "Pickups were not enabled for this channel.");
+        public static PickupResponse PickupsWereAlreadyEnabled => new PickupResponse(false,
+            "Pickups were already enabled for this channel.");
     }
 }

@@ -10,11 +10,6 @@ namespace PickupGameBot.Entities
         public PugPlayer Captain { get; set; }
         private int MaxPlayers { get; set; }
 
-        public Team(int id)
-        {
-            this.Id = id;
-        }
-
         public Team(int id, PugPlayer captain, int maxPlayers)
         {
             this.Id = id;

@@ -8,4 +8,8 @@
       <Version>1.0.0-rc2</Version>
     </PackageReference>
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Commands" />
+    <Folder Include="Modules" />
+  </ItemGroup>
 </Project>

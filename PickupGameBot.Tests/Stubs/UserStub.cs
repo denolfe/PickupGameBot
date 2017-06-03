@@ -14,9 +14,6 @@ namespace PickupGameBot.Tests.Stubs
         public Game? Game { get; }
         public UserStatus Status { get; }
 
-        public static UserStub Generate()
-            => UserStub.Generate(new Random());
-        
         public static UserStub Generate(Random rand)
             => new Faker<UserStub>()
                 .RuleFor(u => u.Username, f => f.Name.FirstName())
