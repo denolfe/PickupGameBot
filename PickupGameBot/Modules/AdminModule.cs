@@ -64,14 +64,14 @@ namespace PickupGameBot.Modules
         [Command("repick"), Summary("Go back to gather state")]
         public async Task Repick()
         {
-            throw new NotImplementedException();
         }
         
         [Command("reset"), Summary("Go back to gather state and clear player pool")]
         public async Task Reset()
         {
             //TODO: Remove captains, Mention all players in pool, clear player pool, set state to Gather
-            throw new NotImplementedException();
+            var response = _pickupService.Reset(Context);
+            await ReplyAsync(response.Messages.First());
         }
     }
 }
