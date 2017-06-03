@@ -18,7 +18,7 @@ namespace PickupGameBot.Tests.Tests
         private readonly PickupService _service;
         private readonly Random _rand;
         private readonly CommandContextStub _context;
-        
+
         public PickupServiceAdminTests()
         {
             _service = new PickupService(_provider);
@@ -26,7 +26,7 @@ namespace PickupGameBot.Tests.Tests
             _context = CommandContextStub.Generate(_rand);
             var response = _service.EnablePickups(_context);
         }
-        
+
         [Fact]
         public void ResetShouldRemoveAllPlayersFromPool()
         {
@@ -35,7 +35,7 @@ namespace PickupGameBot.Tests.Tests
                 userList.Add(UserStub.Generate(_rand));
             userList.ForEach(p => _service.AddPlayer(_context, true));
             var response = _service.Reset(_context);
-            
+
             Assert.True(response.Success);
             Assert.Equal(0, _service.GetPickupChannel(_context).PlayerPool.Count);
         }
@@ -49,7 +49,7 @@ namespace PickupGameBot.Tests.Tests
                 _context.User = user;
                 _service.AddPlayer(_context, true);
             }
-            
+
             var randomPlayerInPool = _service
                 .GetPickupChannel(_context)
                 .PlayerPool
@@ -62,7 +62,7 @@ namespace PickupGameBot.Tests.Tests
             var firstPickingCaptain = pickupChannel.PickingCaptain.User;
             var pickResponse = pickupChannel.PickPlayer(firstPickingCaptain, randomPlayerInPool.User);
             Assert.True(pickResponse.Success);
-            
+
             var randomPlayerInPool2 = pickupChannel.PlayerPool.OrderBy(x => Guid.NewGuid()).Take(1).FirstOrDefault();
             var pickResponse2 = pickupChannel
                 .PickPlayer(pickupChannel.PickingCaptain.User, randomPlayerInPool2.User);
@@ -70,15 +70,30 @@ namespace PickupGameBot.Tests.Tests
 
             var repickResponse = pickupChannel.Repick();
             Assert.True(repickResponse.Success);
-            
+
             // Picking captain should reset
             Assert.Equal(1, pickupChannel.PickingCaptain.TeamId);
-            
+
             // Should not reset captains
             Assert.Equal(2, pickupChannel.Captains.Count);
-            
+
             // 8 players left after 2 captains already on a team
             Assert.Equal(8, pickupChannel.PlayerPool.Count);
+        }
+
+        [Fact]
+        public void RepickShouldNotBeAllowedDuringGather()
+        {
+            for (var i = 0; i < 9; i++)
+            {
+                var user = UserStub.Generate(_rand);
+                _context.User = user;
+                _service.AddPlayer(_context, true);
+            }
+
+            var pickupChannel = _service.GetPickupChannel(_context);
+            var repickResponse = pickupChannel.Repick();
+            Assert.False(repickResponse.Success);
         }
     }
 }
