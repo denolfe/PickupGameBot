@@ -49,6 +49,7 @@ namespace PickupGameBot.Entities
             SelectCaptains(HasEnoughEligibleCaptains);
             AssignCaptains();
 
+            // TODO: Announce captains in this string as well
             return PickupResponse.PickingToStart(playerJoinString);
         }
         
