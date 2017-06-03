@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using Discord;
 using PickupGameBot.Enums;
 using PickupGameBot.Utility;
@@ -17,14 +18,11 @@ namespace PickupGameBot.Entities
             PrettyConsole.Log(LogSeverity.Info, "Response", message);
         }
         
-        public PickupResponse(bool success, List<string> messageses)
+        public PickupResponse(bool success, List<string> messages)
         {
             Success = success;
-            Messages = messageses;
-            foreach (var message in messageses)
-            {
-                PrettyConsole.Log(LogSeverity.Info, "Response", message);
-            }
+            Messages = messages;
+            PrettyConsole.Log(LogSeverity.Info, "Response", messages.First());
         }
         
         public static PickupResponse Bad(string message) => new PickupResponse(false, message);
@@ -66,7 +64,7 @@ namespace PickupGameBot.Entities
         public static PickupResponse AlreadyJoined(string username) => new PickupResponse(false,
             $"{username} has already joined.");
         public static PickupResponse NoPickupsForChannel => new PickupResponse(false, 
-            "No pickups found for this channel. An admin must type **!admin enable** to start pickups.");
+            "No pickups found for this channel. An admin must type **!enable** to allow pickups in this channel.");
         public static PickupResponse PickupsWereNotEnabled => new PickupResponse(false,
             "Pickups were not enabled for this channel.");
         public static PickupResponse PickupsWereAlreadyEnabled => new PickupResponse(false,

@@ -84,29 +84,14 @@ namespace PickupGameBot.Services
 //            );
 //        }
 
-//        public PickupStatus Repick()
-//        {
-//            if (this.PickupState != PickupState.Picking)
-//                return BuildPickupStatus(PickupResponse.NotInPickingStateRepick);
-//
-//
-//            if (this.Team1?.Players.Count > 0)
-//                this.PlayerPool.AddRange(this.Team1.PopAll());
-//            if (this.Team2?.Players.Count > 0)
-//                this.PlayerPool.AddRange(this.Team2.PopAll());
-//
-//            // Remove captains from normal player pool
-//            foreach (var pugPlayer in this.Captains)
-//            {
-//                if (this.PlayerPool.ContainsPlayer(pugPlayer))
-//                    this.PlayerPool = this.PlayerPool.RemovePlayer(pugPlayer);
-//            }
-//
-//            this.PickingCaptain = this.Team1?.Captain;
-//
-//            return BuildPickupStatus(PickupResponse.PickingRestarted);
-//        }
-//
+        public PickupResponse Repick(ICommandContext context)
+        {
+            var channel = GetPickupChannel(context);
+            return channel == null 
+                ? PickupResponse.PickupsWereNotEnabled 
+                : PickupResponse.PickingRestarted;
+        }
+
         // TODO: Mention all players that were in pool
         public PickupResponse Reset(ICommandContext context)
         {
@@ -116,7 +101,7 @@ namespace PickupGameBot.Services
 
             var response = channel.Reset();
             
-            return PickupResponse.Good(response.Messages.First());
+            return PickupResponse.Good(response.Messages);
         }
     }
 }

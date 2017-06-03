@@ -7,6 +7,9 @@
     <PackageReference Include="Discord.Net">
       <Version>1.0.0-rc2</Version>
     </PackageReference>
+    <PackageReference Include="System.ValueTuple">
+      <Version>4.4.0-preview1-25305-02</Version>
+    </PackageReference>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Commands" />

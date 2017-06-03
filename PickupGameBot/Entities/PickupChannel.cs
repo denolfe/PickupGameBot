@@ -126,16 +126,22 @@ namespace PickupGameBot.Entities
 
         public PickupResponse Reset()
         {
-            CurrentGame.RemoveTeams();
+            var removedPlayers = CurrentGame.RemoveTeams();
+            removedPlayers.AddRange(PlayerPool);
             PlayerPool = new List<PugPlayer>();
             Captains = new List<PugPlayer>();
             _pickNumber = 1;
             PickupState = PickupState.Gathering;
-            return PickupResponse.Good("Pickup has been reset.");
+            var response = PickupResponse.PickupReset;
+            response.Messages.Add(removedPlayers.ToFormattedList(true));
+            return response;
         }
 
         public PickupResponse Repick()
         {
+            if (PickupState != PickupState.Picking)
+                return PickupResponse.NotInPickingState;
+            
             PlayerPool.AddRange(CurrentGame.Repick());
             _pickNumber = 1;
             PickingCaptain = Captains.FirstOrDefault(c => c.TeamId == 1);

@@ -12,7 +12,6 @@ using PickupGameBot.Utility;
 namespace PickupGameBot.Modules
 {
     [ElevatedUserPrecondition.RequireElevatedUserAttribute]
-    [Group("admin")]
     public class AdminModule : ModuleBase
     {
         private readonly PickupService _pickupService;
@@ -42,20 +41,20 @@ namespace PickupGameBot.Modules
             await ReplyAsync(response.Messages.First());
         }
         
-        [Command("add"), Summary("Force add player")]
+        [Command("fadd"), Summary("Force add player")]
         public async Task ForceAdd([Remainder, Summary("The user to force add")] IUser user)
         {
             throw new NotImplementedException();
         }
         
-        [Command("remove"), Summary("Force add player")]
+        [Command("fremove"), Summary("Force add player")]
         [Alias("kick")]
         public async Task ForceRemove([Remainder, Summary("The user to force remove")] IUser user)
         {
             throw new NotImplementedException();
         }
         
-        [Command("captain"), Summary("Force set user as a captain")]
+        [Command("fcaptain"), Summary("Force set user as a captain")]
         public async Task ForceCaptain([Remainder, Summary("The user to set as captain")] IUser user)
         {
             throw new NotImplementedException();
@@ -64,14 +63,15 @@ namespace PickupGameBot.Modules
         [Command("repick"), Summary("Go back to gather state")]
         public async Task Repick()
         {
+            var response = _pickupService.Repick(Context);
+            await ReplyAsync(string.Join("\n", response.Messages));
         }
         
         [Command("reset"), Summary("Go back to gather state and clear player pool")]
         public async Task Reset()
         {
-            //TODO: Remove captains, Mention all players in pool, clear player pool, set state to Gather
             var response = _pickupService.Reset(Context);
-            await ReplyAsync(response.Messages.First());
+            await ReplyAsync(string.Join("\n", response.Messages));
         }
     }
 }

@@ -12,20 +12,31 @@ namespace PickupGameBot.Entities
 
         public Team(int id, PugPlayer captain, int maxPlayers)
         {
-            this.Id = id;
-            this.Captain = captain;
-            this.MaxPlayers = maxPlayers;
-            this.Players.Add(captain);
+            Id = id;
+            Captain = captain;
+            MaxPlayers = maxPlayers;
+            Players.Add(captain);
         }
 
-        public void AddPlayer(PugPlayer player) => this.Players.Add(player);
-        public bool IsFull() => this.Players.Count == this.MaxPlayers;
+        public void AddPlayer(PugPlayer player) => Players.Add(player);
+        public bool IsFull() => Players.Count == MaxPlayers;
 
-        public List<PugPlayer> PopAll()
+        public List<PugPlayer> PopAll(bool includeCaptain = false)
         {
-            var players = this.Players.Where(p => !p.IsCaptain).ToList();
-            this.Players = new List<PugPlayer> {this.Captain};
-            return players;
+            var playerList = new List<PugPlayer>();
+            if (includeCaptain)
+            {
+                playerList = Players;
+            }
+            else
+            {
+                playerList = Players.Where(p => !p.IsCaptain).ToList();
+                Players = new List<PugPlayer> {Captain};
+            }
+                
+            
+            Players = new List<PugPlayer> {Captain};
+            return playerList;
         }
     }
 }

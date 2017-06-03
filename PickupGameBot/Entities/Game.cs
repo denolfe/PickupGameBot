@@ -34,9 +34,12 @@ namespace PickupGameBot.Entities
             return Teams[id].Captain;
         }
 
-        public void RemoveTeams()
+        public List<PugPlayer> RemoveTeams()
         {
+            var players = new List<PugPlayer>();
+            Teams.Select(p => p.Value).ToList().ForEach(t => players.AddRange(t.PopAll(true)));
             Teams = new Dictionary<int, Team>();
+            return players;
         }
 
         public List<PugPlayer> Repick()
