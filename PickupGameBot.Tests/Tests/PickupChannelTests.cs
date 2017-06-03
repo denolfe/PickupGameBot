@@ -25,14 +25,18 @@ namespace PickupGameBot.Tests.Tests
             _messageChannel = MessageChannelStub.Generate(_rand);
             _channel = new PickupChannel(_messageChannel);
         }
-        
+
+        private PugPlayer GetRandomPlayer() 
+            => _channel.PlayerPool.OrderBy(x => Guid.NewGuid()).Take(1).FirstOrDefault();
+
         [Fact]
         public void ShouldInitializeGameAndPlayerPool()
         {
             Assert.NotNull(_channel.CurrentGame);
             Assert.Equal(0, _channel.PlayerPool.Count);
         }
-
+        
+#region Add/Remove Players
         [Fact]
         public void ShouldAddPlayersToPool()
         {
@@ -151,7 +155,10 @@ namespace PickupGameBot.Tests.Tests
             Assert.True(_channel.Captains.Count(c => c.TeamId == 1) == 1);
             Assert.True(_channel.Captains.Count(c => c.TeamId == 2) == 1);
         }
+
+#endregion
         
+#region Picking
         [Fact]
         public void ShouldBeAbleToPickPlayersToTeam()
         {
@@ -209,5 +216,28 @@ namespace PickupGameBot.Tests.Tests
             Assert.Equal(3, _channel.CurrentGame.Teams[2].Players.Count); // Captain + 2 Player
             Assert.Equal(4, _channel.PlayerPool.Count);
         }
+        
+        [Fact]
+        public void ShouldNotAllowPickingIfTeamsAreFull()
+        {
+            // 10 players
+            for (int i = 0; i < 10; i++)
+            {
+                var user = UserStub.Generate(_rand);
+                var response = _channel.AddPlayerToPool(user, i < 5);
+            }
+            
+            // Pick all players
+            for (int i = 0; i < 8; i++)
+            {
+                var pickResponse = _channel.PickPlayer(_channel.PickingCaptain.User, GetRandomPlayer().User);
+                Assert.True(pickResponse.Success);
+            }
+            
+            var additionalPickAttempt = _channel.PickPlayer(_channel.PickingCaptain.User, UserStub.Generate(_rand));
+            Assert.False(additionalPickAttempt.Success);
+            Assert.Contains("Teams are full", additionalPickAttempt.Messages.First());
+        }
+#endregion
     }
 }
