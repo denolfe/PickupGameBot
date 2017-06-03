@@ -39,18 +39,18 @@ namespace PickupGameBot.Entities
                 : PickupResponse.Good($"**{FormattedPlayerNumbers()}**: {PlayerPool.ToFormattedList()}");
         }
        
-//        public PickupStatus StartPicking()
-//        {
-//            if (!HasMinimumPlayers)
-//                PickupResponse.Bad(
-//                    $"Not enough players in pool {FormattedPlayerNumbers()}. {FormattedPlayersNeeded()}"));
-//
-//            PickupState = PickupState.Picking;
-//            SelectCaptains(HasEnoughEligibleCaptains);
-//            AssignCaptains();
-//
-//            PickupResponse.PickingToStart;
-//        }
+        private PickupResponse StartPicking(string playerJoinString)
+        {
+            if (!HasMinimumPlayers)
+                PickupResponse.Bad(
+                    $"Not enough players in pool {FormattedPlayerNumbers()}. {FormattedPlayersNeeded()}");
+
+            PickupState = PickupState.Picking;
+            SelectCaptains(HasEnoughEligibleCaptains);
+            AssignCaptains();
+
+            return PickupResponse.PickingToStart(playerJoinString);
+        }
         
         public PickupResponse AddPlayerToPool(IUser user, bool wantsCaptain, bool admin = false)
         {
@@ -67,11 +67,9 @@ namespace PickupGameBot.Entities
 
             //TODO: Add conditional if pug is full and start picking
 
-            if (PlayerPool.Count == CurrentGame.MinimumPlayers)
-                return PickupResponse.Good($"{pugPlayer.User.Username} joined{captainMessage}.\n" +
-                                                             "Pickup has enough players to start!");
-
-            return PickupResponse.Good($"{pugPlayer.User.Username} joined{captainMessage}.");
+            return !HasMinimumPlayers 
+                ? PickupResponse.Good($"{pugPlayer.User.Username} joined{captainMessage}.") 
+                : StartPicking($"{pugPlayer.User.Username} joined{captainMessage}.");
         }
 
         public PickupResponse RemovePlayerFromPool(IUser user)
@@ -126,6 +124,24 @@ namespace PickupGameBot.Entities
                                                          $" to Team {Captains.GetPlayer(captain).TeamId}\n" +
                                                          $"{PickingCaptain.User.Username}'s Pick");
         }
+
+        public PickupResponse Reset()
+        {
+            CurrentGame.RemoveTeams();
+            PlayerPool = new List<PugPlayer>();
+            Captains = new List<PugPlayer>();
+            _pickNumber = 1;
+            PickupState = PickupState.Gathering;
+            return PickupResponse.Good("Pickup has been reset.");
+        }
+
+        public PickupResponse Repick()
+        {
+            PlayerPool.AddRange(CurrentGame.Repick());
+            _pickNumber = 1;
+            PickingCaptain = Captains.FirstOrDefault(c => c.TeamId == 1);
+            return PickupResponse.Good("Players have been moved back to the player pool.");
+        }
         
         private void SelectCaptains(bool enoughEligibleCaptains)
         {
@@ -156,8 +172,6 @@ namespace PickupGameBot.Entities
                 if (PlayerPool.ContainsPlayer(pugPlayer))
                     PlayerPool = PlayerPool.RemovePlayer(pugPlayer);
             }
-            
-            CurrentGame.CreateTeams(Captains);
         }
         
         private void AssignCaptains()
