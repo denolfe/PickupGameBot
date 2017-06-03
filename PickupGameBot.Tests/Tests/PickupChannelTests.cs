@@ -218,7 +218,7 @@ namespace PickupGameBot.Tests.Tests
         }
         
         [Fact]
-        public void ShouldNotAllowPickingIfTeamsAreFull()
+        public void TeamsShouldBeChosenAfterAllPicked()
         {
             // 10 players
             for (int i = 0; i < 10; i++)
@@ -234,9 +234,8 @@ namespace PickupGameBot.Tests.Tests
                 Assert.True(pickResponse.Success);
             }
             
-            var additionalPickAttempt = _channel.PickPlayer(_channel.PickingCaptain.User, UserStub.Generate(_rand));
-            Assert.False(additionalPickAttempt.Success);
-            Assert.Contains("Teams are full", additionalPickAttempt.JoinedMessages);
+            Assert.True(_channel.LastGame.Picked);
+            Assert.Equal(0, _channel.PlayerPool.Count);
         }
 #endregion
     }

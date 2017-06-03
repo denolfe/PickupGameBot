@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using Discord;
 using PickupGameBot.Enums;
 using PickupGameBot.Extensions;
@@ -16,6 +17,7 @@ namespace PickupGameBot.Entities
         public PugPlayer PickingCaptain { get; set; }
         public PickupState PickupState { get; private set; } = PickupState.Gathering;
         public Game CurrentGame { get; set; }
+        public Game LastGame { get; set; }
         private int _pickNumber = 1;
 
         public bool HasMinimumPlayers => PlayerPool.Count >= CurrentGame.MinimumPlayers;
@@ -109,12 +111,12 @@ namespace PickupGameBot.Entities
             // Remove from Player Pool
             PlayerPool = PlayerPool.RemovePlayer(pickedPlayer);
 
-            // Check if full after the pick
+            // Check if full AFTER the pick
             if (CurrentGame.BothTeamsAreFull())
             {
-                // TODO: take a look at how states are used. This somehow needs to set back to gather!
-                PickupState = PickupState.Starting;
-                return PickupResponse.PickingCompleted;
+                var gameString = CurrentGame.ToString();
+                PickingFinished();
+                return PickupResponse.PickingCompleted(CurrentGame.ToString());
             }
 
             SetNextCaptain();
@@ -126,15 +128,29 @@ namespace PickupGameBot.Entities
 
         public PickupResponse Reset()
         {
+            var removedPlayers = PickingFinished(true);
+            var response = PickupResponse.PickupReset;
+            response.Messages.Add(removedPlayers.ToFormattedList(true));
+            return response;
+        }
+
+        private List<PugPlayer> PickingFinished(bool resetFlag = false)
+        {
             var removedPlayers = CurrentGame.RemoveTeams();
             removedPlayers.AddRange(PlayerPool);
             PlayerPool = new List<PugPlayer>();
             Captains = new List<PugPlayer>();
+            
+            if (!resetFlag)
+            {
+                CurrentGame.Picked = true;
+                LastGame = CurrentGame;
+            }
+            
+            CurrentGame = new Game();
             _pickNumber = 1;
             PickupState = PickupState.Gathering;
-            var response = PickupResponse.PickupReset;
-            response.Messages.Add(removedPlayers.ToFormattedList(true));
-            return response;
+            return removedPlayers;
         }
 
         public PickupResponse Repick()
@@ -213,8 +229,7 @@ namespace PickupGameBot.Entities
 
             PickingCaptain = CurrentGame.GetCaptainFromId(pickMap[_pickNumber]);
         }
-        
-        
+
         private PickupStatus BuildPickupStatus(PickupResponse puResponse) 
             => new PickupStatus(
                 PickupState,

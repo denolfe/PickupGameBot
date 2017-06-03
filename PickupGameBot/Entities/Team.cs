@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 
 namespace PickupGameBot.Entities
 {
@@ -37,6 +38,14 @@ namespace PickupGameBot.Entities
             
             Players = new List<PugPlayer> {Captain};
             return playerList;
+        }
+
+        public string Formatted()
+        {
+            var builder = new StringBuilder();
+            builder.Append($"Team {Id}: ");
+            Players.ForEach(p => builder.Append(p.ToMentionString()));
+            return builder.ToString();
         }
     }
 }

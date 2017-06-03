@@ -25,5 +25,11 @@ namespace PickupGameBot.Entities
             var captainFlag = WantsCaptain || IsCaptain ? "*" : string.Empty;
             return $"{User.Username}{captainFlag}";
         }
+        
+        public string ToMentionString()
+        {
+            var captainFlag = WantsCaptain || IsCaptain ? "*" : string.Empty;
+            return $"{User.Mention}{captainFlag}";
+        }
     }
 }

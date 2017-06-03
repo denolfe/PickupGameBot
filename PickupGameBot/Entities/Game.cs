@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using Discord;
 
 namespace PickupGameBot.Entities
@@ -8,6 +9,7 @@ namespace PickupGameBot.Entities
     {
         public Dictionary<int, Team> Teams;
         public int MinimumPlayers;
+        public bool Picked = false;
 
         public Game(int minimumPlayers = 10)
         {
@@ -55,6 +57,15 @@ namespace PickupGameBot.Entities
                 return false;
 
             return Teams[1].IsFull() && Teams[2].IsFull();
+        }
+
+        public override string ToString()
+        {
+            var builder = new StringBuilder();
+            this.Teams
+                .Select(t => t.Value).ToList()
+                .ForEach(team => builder.Append(team.ToString()));
+            return builder.ToString();
         }
     }
 }
