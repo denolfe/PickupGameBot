@@ -11,6 +11,9 @@ namespace PickupGameBot.Entities
         public bool Success { get; set; }
         public List<string> Messages { get; set; }
 
+        public string JoinedMessages =>
+            string.Join("\n", Messages);
+
         public PickupResponse(bool success, string message)
         {
             Success = success;

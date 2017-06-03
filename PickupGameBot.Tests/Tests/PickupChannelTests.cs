@@ -43,7 +43,7 @@ namespace PickupGameBot.Tests.Tests
             var user = UserStub.Generate(_rand);
             var response = _channel.AddPlayerToPool(user, false);
             Assert.True(response.Success);
-            Assert.Contains("joined", response.Messages.First());
+            Assert.Contains("joined", response.JoinedMessages);
             Assert.Equal(1, _channel.PlayerPool.Count);
         }
         
@@ -53,7 +53,7 @@ namespace PickupGameBot.Tests.Tests
             var user = UserStub.Generate(_rand);
             var response = _channel.AddPlayerToPool(user, true);
             Assert.True(response.Success);
-            Assert.Contains("joined", response.Messages.First());
+            Assert.Contains("joined", response.JoinedMessages);
             Assert.Equal(1, _channel.PlayerPool.Where(p => p.WantsCaptain).ToList().Count);
         }
         
@@ -65,7 +65,7 @@ namespace PickupGameBot.Tests.Tests
             Assert.True(response1.Success);
             var response2 = _channel.AddPlayerToPool(user, false);
             Assert.False(response2.Success);
-            Assert.Contains("already joined", response2.Messages.First());
+            Assert.Contains("already joined", response2.JoinedMessages);
         }
         
         [Fact]
@@ -75,7 +75,7 @@ namespace PickupGameBot.Tests.Tests
             var response1 = _channel.AddPlayerToPool(user, false);
             var response2 = _channel.RemovePlayerFromPool(user);
             Assert.True(response2.Success);
-            Assert.Contains("removed", response2.Messages.First());
+            Assert.Contains("removed", response2.JoinedMessages);
             Assert.Equal(0, _channel.PlayerPool.Count);
         }
 
@@ -85,7 +85,7 @@ namespace PickupGameBot.Tests.Tests
             var user = UserStub.Generate(_rand);
             var response = _channel.RemovePlayerFromPool(user);
             Assert.False(response.Success);
-            Assert.Contains("not in the player list", response.Messages.First());
+            Assert.Contains("not in the player list", response.JoinedMessages);
             Assert.Equal(0, _channel.PlayerPool.Count);
         }
 
@@ -102,7 +102,7 @@ namespace PickupGameBot.Tests.Tests
             var joinResponse = _channel.AddPlayerToPool(latePlayer, false);
             
             Assert.False(joinResponse.Success);
-            Assert.Contains("cannot join", joinResponse.Messages.First());
+            Assert.Contains("cannot join", joinResponse.JoinedMessages);
         }
         
         [Fact]
@@ -236,7 +236,7 @@ namespace PickupGameBot.Tests.Tests
             
             var additionalPickAttempt = _channel.PickPlayer(_channel.PickingCaptain.User, UserStub.Generate(_rand));
             Assert.False(additionalPickAttempt.Success);
-            Assert.Contains("Teams are full", additionalPickAttempt.Messages.First());
+            Assert.Contains("Teams are full", additionalPickAttempt.JoinedMessages);
         }
 #endregion
     }

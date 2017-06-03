@@ -64,14 +64,14 @@ namespace PickupGameBot.Modules
         public async Task Repick()
         {
             var response = _pickupService.Repick(Context);
-            await ReplyAsync(string.Join("\n", response.Messages));
+            await ReplyAsync(response.JoinedMessages);
         }
         
         [Command("reset"), Summary("Go back to gather state and clear player pool")]
         public async Task Reset()
         {
             var response = _pickupService.Reset(Context);
-            await ReplyAsync(string.Join("\n", response.Messages));
+            await ReplyAsync(response.JoinedMessages);
         }
     }
 }
