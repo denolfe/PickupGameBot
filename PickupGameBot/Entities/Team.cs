@@ -22,9 +22,14 @@ namespace PickupGameBot.Entities
         public void AddPlayer(PugPlayer player) => Players.Add(player);
         public bool IsFull() => Players.Count == MaxPlayers;
 
+        /// <summary>
+        /// Pop all players, optionally including captain
+        /// </summary>
+        /// <param name="includeCaptain"></param>
+        /// <returns></returns>
         public List<PugPlayer> PopAll(bool includeCaptain = false)
         {
-            var playerList = new List<PugPlayer>();
+            List<PugPlayer> playerList;
             if (includeCaptain)
             {
                 playerList = Players;

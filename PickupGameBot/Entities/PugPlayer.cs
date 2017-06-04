@@ -12,13 +12,13 @@ namespace PickupGameBot.Entities
 
         public PugPlayer(IUser user, bool wantsCaptain)
         {
-            this.User = user;
-            this.WantsCaptain = wantsCaptain;
-            this.IsCaptain = false;
+            User = user;
+            WantsCaptain = wantsCaptain;
+            IsCaptain = false;
         }
         
         public void SetCaptain() => 
-            this.IsCaptain = true;
+            IsCaptain = true;
 
         public override string ToString()
         {

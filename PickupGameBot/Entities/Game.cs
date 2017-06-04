@@ -17,18 +17,26 @@ namespace PickupGameBot.Entities
             Teams = new Dictionary<int, Team>();
         }
 
+        /// <summary>
+        /// Creates teams from list of captains
+        /// </summary>
+        /// <param name="captains"></param>
         public void CreateTeams(List<PugPlayer> captains)
         {
             foreach (var captain in captains)
             {
-                this.Teams.Add(captain.TeamId, new Team(captain.TeamId, captain, MinimumPlayers/2));
-//                this.Teams[captain.TeamId].AddPlayer(captain);
+                Teams.Add(captain.TeamId, new Team(captain.TeamId, captain, MinimumPlayers/2));
             }
         }
         
+        /// <summary>
+        /// Adds player to captain's team
+        /// </summary>
+        /// <param name="captain"></param>
+        /// <param name="player"></param>
         public void AddToCaptainsTeam(PugPlayer captain, PugPlayer player)
         {
-            this.Teams[captain.TeamId].AddPlayer(player);
+            Teams[captain.TeamId].AddPlayer(player);
         }
 
         public PugPlayer GetCaptainFromId(int id)
@@ -36,6 +44,10 @@ namespace PickupGameBot.Entities
             return Teams[id].Captain;
         }
 
+        /// <summary>
+        /// Removes teams from game, returns all players
+        /// </summary>
+        /// <returns></returns>
         public List<PugPlayer> RemoveTeams()
         {
             var players = new List<PugPlayer>();
@@ -44,6 +56,10 @@ namespace PickupGameBot.Entities
             return players;
         }
 
+        /// <summary>
+        /// Removes players from team
+        /// </summary>
+        /// <returns></returns>
         public List<PugPlayer> Repick()
         {
             var players = new List<PugPlayer>();
@@ -62,7 +78,7 @@ namespace PickupGameBot.Entities
         public override string ToString()
         {
             var builder = new StringBuilder();
-            this.Teams
+            Teams
                 .Select(t => t.Value).ToList()
                 .ForEach(team => builder.Append(team.ToString()));
             return builder.ToString();

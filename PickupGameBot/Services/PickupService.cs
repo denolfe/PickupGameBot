@@ -23,7 +23,7 @@ namespace PickupGameBot.Services
 
         public PickupService(IServiceProvider provider)
         {
-            this._provider = provider;
+            _provider = provider;
         }
         
         public PickupResponse EnablePickups(ICommandContext context) 
@@ -73,13 +73,13 @@ namespace PickupGameBot.Services
 //        private PickupStatus BuildPickupStatus(PickupResponse puResponse)
 //        {
 //            return new PickupStatus(
-//                this.PickupState,
-//                this._minimumPlayers,
-//                this.Captains,
-//                this.PlayerPool,
-//                this.Team1,
-//                this.Team2,
-//                this.BothTeamsAreFull(),
+//                PickupState,
+//                _minimumPlayers,
+//                Captains,
+//                PlayerPool,
+//                Team1,
+//                Team2,
+//                BothTeamsAreFull(),
 //                puResponse
 //            );
 //        }

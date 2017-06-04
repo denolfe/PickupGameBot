@@ -116,7 +116,7 @@ namespace PickupGameBot.Entities
             {
                 var gameString = CurrentGame.ToString();
                 PickingFinished();
-                return PickupResponse.PickingCompleted(CurrentGame.ToString());
+                return PickupResponse.PickingCompleted(gameString);
             }
 
             SetNextCaptain();
