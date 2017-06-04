@@ -43,10 +43,6 @@ namespace PickupGameBot.Entities
        
         private PickupResponse StartPicking(string playerJoinString)
         {
-            if (!HasMinimumPlayers)
-                PickupResponse.Bad(
-                    $"Not enough players in pool {FormattedPlayerNumbers()}. {FormattedPlayersNeeded()}");
-
             PickupState = PickupState.Picking;
             SelectCaptains(HasEnoughEligibleCaptains);
             AssignCaptains();

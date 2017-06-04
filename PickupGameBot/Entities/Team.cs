@@ -9,7 +9,7 @@ namespace PickupGameBot.Entities
         public int Id { get; set; }
         public List<PugPlayer> Players { get; set; } = new List<PugPlayer>();
         public PugPlayer Captain { get; set; }
-        private int MaxPlayers { get; set; }
+        public int MaxPlayers { get; set; }
 
         public Team(int id, PugPlayer captain, int maxPlayers)
         {
