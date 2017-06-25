@@ -51,7 +51,7 @@ namespace PickupGameBot.Entities
             return PickupResponse.PickingToStart(playerJoinString);
         }
         
-        public PickupResponse AddPlayerToPool(IUser user, bool wantsCaptain, bool admin = false)
+        public PickupResponse AddPlayerToPool(IUser user, bool wantsCaptain)
         {
             var pugPlayer = new PugPlayer(user, wantsCaptain);
             

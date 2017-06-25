@@ -29,9 +29,6 @@ namespace PickupGameBot.Preconditions
                     socketGuildUser != null && !socketGuildUser.GetPermissions(context.Channel as SocketGuildChannel).ManageChannel 
                         ? PreconditionResult.FromError("You do not have permissions to manage this channel.") 
                         : PreconditionResult.FromSuccess());
-                
-//                if (!(context.User as SocketGuildUser).Roles.Any(id => roles.Contains(id.Id)))
-//                    return Task.FromResult(PreconditionResult.FromError("You do not have a whitelisted role."));
             }
         }
     }
