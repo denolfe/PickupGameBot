@@ -33,7 +33,7 @@ namespace PickupGameBot.Entities
         public PickupChannel(IMessageChannel chan)
         {
             MessageChannel = chan;
-            CurrentGame = _preferredTeamSize == 0 ? new Game() : new Game(_preferredTeamSize);
+            CurrentGame = new Game();
         }
 
         public PickupResponse GetStatus()
@@ -130,7 +130,7 @@ namespace PickupGameBot.Entities
                 LastGame = CurrentGame;
             }
             
-            CurrentGame = new Game();
+            CurrentGame = _preferredTeamSize == 0 ? new Game() : new Game(_preferredTeamSize);
             _pickNumber = 1;
             PickupState = PickupState.Gathering;
             return removedPlayers;
