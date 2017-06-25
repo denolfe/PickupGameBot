@@ -31,10 +31,15 @@ namespace PickupGameBot.Tests.Tests
         [Fact]
         public void ResetShouldRemoveAllPlayersFromPool()
         {
-            var userList = new List<IUser>();
-            for (var i = 0; i < 10; i++)
-                userList.Add(UserStub.Generate(_rand));
-            userList.ForEach(p => _service.AddPlayer(_context, true));
+            // 9 Players
+            for (var i = 0; i < 9; i++)
+            {
+                var user = UserStub.Generate(_rand);
+                _context.User = user;
+                _service.AddPlayer(_context, true);
+            }
+            Assert.Equal(9, _service.GetPickupChannel(_context).PlayerPool.Count);
+            
             var response = _service.Reset(_context);
 
             Assert.True(response.Success);
