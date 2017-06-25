@@ -4,6 +4,7 @@ using System.Linq;
 using System.Windows.Input;
 using Discord;
 using Discord.Commands;
+using PickupGameBot.Enums;
 using PickupGameBot.Services;
 using PickupGameBot.Tests.Stubs;
 using Xunit;
@@ -94,6 +95,31 @@ namespace PickupGameBot.Tests.Tests
             var pickupChannel = _service.GetPickupChannel(_context);
             var repickResponse = pickupChannel.Repick();
             Assert.False(repickResponse.Success);
+        }
+
+        [Fact]
+        public void ShouldSetTeamSize()
+        {
+            var user = UserStub.Generate(_rand);
+            _context.User = user;
+            _service.AddPlayer(_context, true);
+
+            _service.SetTeamSize(_context, "12");
+            
+            var pickupChannel = _service.GetPickupChannel(_context);
+            Assert.Equal(12, pickupChannel.CurrentGame.MinimumPlayers);
+        }
+        
+        [Fact]
+        public void CannotSetTeamSizeIfUneven()
+        {
+            var user = UserStub.Generate(_rand);
+            _context.User = user;
+            _service.AddPlayer(_context, true);
+
+            _service.SetTeamSize(_context, "11");
+            var pickupChannel = _service.GetPickupChannel(_context);
+            Assert.Equal(10, pickupChannel.CurrentGame.MinimumPlayers); // Should be default team size
         }
     }
 }

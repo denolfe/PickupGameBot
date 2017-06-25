@@ -19,6 +19,7 @@ namespace PickupGameBot.Entities
         public Game CurrentGame { get; set; }
         public Game LastGame { get; set; }
         private int _pickNumber = 1;
+        private int _preferredTeamSize = 0;
 
         public bool HasMinimumPlayers => PlayerPool.Count >= CurrentGame.MinimumPlayers;
         public bool HasEnoughEligibleCaptains => PlayerPool.Count(p => p.WantsCaptain) >= 2 || Captains.Count == 2;
@@ -31,7 +32,7 @@ namespace PickupGameBot.Entities
         public PickupChannel(IMessageChannel chan)
         {
             MessageChannel = chan;
-            CurrentGame = new Game();
+            CurrentGame = _preferredTeamSize == 0 ? new Game() : new Game(_preferredTeamSize);
         }
 
         public PickupResponse GetStatus()
@@ -158,6 +159,27 @@ namespace PickupGameBot.Entities
             _pickNumber = 1;
             PickingCaptain = Captains.FirstOrDefault(c => c.TeamId == 1);
             return PickupResponse.Good("Players have been moved back to the player pool.");
+        }
+        
+        public PickupResponse SetTeamSize(string value)
+        {
+            if (PickupState != PickupState.Gathering)
+                return PickupResponse.Bad("Cannot set team size when not in Gathering state.");
+
+            int teamSize;
+            var isNumber = int.TryParse(value, out teamSize);
+
+            if (teamSize % 2 != 0)
+                return PickupResponse.Bad("Team size must be an even number");
+
+            if (isNumber)
+            {
+                CurrentGame.MinimumPlayers = teamSize;
+                _preferredTeamSize = teamSize;
+                return PickupResponse.Good($"Team size successfully set to **{CurrentGame.MinimumPlayers}**");
+            }
+            else
+                return PickupResponse.Bad("Invalid value for team size.");
         }
         
         private void SelectCaptains(bool enoughEligibleCaptains)
