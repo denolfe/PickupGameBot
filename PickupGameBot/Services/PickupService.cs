@@ -51,10 +51,22 @@ namespace PickupGameBot.Services
             try { return GetPickupChannel(context).AddPlayerToPool(context.User, wantsCaptain); }
             catch(Exception e ) { return PickupResponse.NoPickupsForChannel;}
         }
+        
+        public PickupResponse ForceAddPlayer(ICommandContext context, IUser user)
+        {
+            try { return GetPickupChannel(context).AddPlayerToPool(user, false); }
+            catch(Exception e ) { return PickupResponse.NoPickupsForChannel;}
+        }
 
         public PickupResponse RemovePlayer(ICommandContext context)
         {
             try { return GetPickupChannel(context).RemovePlayerFromPool(context.User); }
+            catch(Exception e ) { return PickupResponse.NoPickupsForChannel;}
+        }
+        
+        public PickupResponse ForceRemovePlayer(ICommandContext context, IUser user)
+        {
+            try { return GetPickupChannel(context).RemovePlayerFromPool(user); }
             catch(Exception e ) { return PickupResponse.NoPickupsForChannel;}
         }
         
