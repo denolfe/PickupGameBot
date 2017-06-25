@@ -45,9 +45,9 @@ namespace PickupGameBot.Services
 
         private async Task HandleCommandAsync(SocketMessage s)
         {
-            // TODO: Phase this out and implement !enable/!disable to add new channels
-            if (_config.ChannelWhitelist.All(id => id != s.Channel.Id))
-                return;
+//            // TODO: Phase this out and implement !enable/!disable to add new channels
+//            if (_config.ChannelWhitelist.All(id => id != s.Channel.Id))
+//                return;
             
             var timer = new Stopwatch();
             timer.Start();

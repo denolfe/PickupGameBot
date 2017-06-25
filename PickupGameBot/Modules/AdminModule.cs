@@ -44,14 +44,17 @@ namespace PickupGameBot.Modules
         [Command("fadd"), Summary("Force add player")]
         public async Task ForceAdd([Remainder, Summary("The user to force add")] IUser user)
         {
-            throw new NotImplementedException();
+            //TODO: Force adding captains
+            var response = _pickupService.ForceAddPlayer(Context, user);
+            await ReplyAsync(response.Messages.First());
         }
         
         [Command("fremove"), Summary("Force add player")]
         [Alias("kick")]
         public async Task ForceRemove([Remainder, Summary("The user to force remove")] IUser user)
         {
-            throw new NotImplementedException();
+            var response = _pickupService.ForceRemovePlayer(Context, user);
+            await ReplyAsync(response.Messages.First());
         }
         
         [Command("fcaptain"), Summary("Force set user as a captain")]
