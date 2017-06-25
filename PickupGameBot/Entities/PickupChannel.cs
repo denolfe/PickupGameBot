@@ -158,6 +158,9 @@ namespace PickupGameBot.Entities
             if (teamSize % 2 != 0)
                 return PickupResponse.Bad("Team size must be an even number");
 
+            if (teamSize < PlayerPool.Count)
+                return PickupResponse.Bad("Team size cannot be less than players in the pool.");
+
             if (isNumber)
             {
                 CurrentGame.MinimumPlayers = teamSize;
