@@ -6,6 +6,7 @@ using Discord;
 using PickupGameBot.Enums;
 using PickupGameBot.Extensions;
 using PickupGameBot.Utility;
+using PickupGameBot.Validators;
 
 namespace PickupGameBot.Entities
 {
@@ -56,11 +57,10 @@ namespace PickupGameBot.Entities
         {
             var pugPlayer = new PugPlayer(user, wantsCaptain);
             
-            if (PickupState != PickupState.Gathering)
-                return PickupResponse.Bad($"State: {PickupState}. New players cannot join at this time");
-
-            if (PlayerPool.ContainsPlayer(pugPlayer))
-                return PickupResponse.AlreadyJoined(pugPlayer.User.Username);
+            var validator = new AddPlayerValidator();
+            var validationResponse = validator.Validate(this, pugPlayer);
+            if (validationResponse != null)
+                return validationResponse;
 
             PlayerPool.Add(pugPlayer);
             var captainMessage = pugPlayer.WantsCaptain ? " as eligible captain" : string.Empty;
@@ -72,11 +72,10 @@ namespace PickupGameBot.Entities
 
         public PickupResponse RemovePlayerFromPool(IUser user)
         {
-            if (!PlayerPool.ContainsPlayer(user))
-                return PickupResponse.NotInPlayerList(user.Username);
-            
-            if (PickupState != PickupState.Gathering)
-                return PickupResponse.Bad($"State: {PickupState}. Players cannot leave at this time");
+            var validator = new RemovePlayerValidator();
+            var validationResponse = validator.Validate(this, user);
+            if (validationResponse != null)
+                return validationResponse;
             
             PlayerPool = PlayerPool.RemovePlayer(user);
             return PickupResponse.RemovedFromList(user.Username);
@@ -84,24 +83,11 @@ namespace PickupGameBot.Entities
         
         public PickupResponse PickPlayer(IUser captain, IUser user)
         {
-            if (CurrentGame.BothTeamsAreFull())
-                return PickupResponse.TeamsFull;
-
-            if (user == null)
-                return PickupResponse.NoPlayersLeftInPool;
-
-            if (PickupState != PickupState.Picking)
-                return PickupResponse.NotInPickingState;
-
-            if (!Captains.ContainsPlayer(captain))
-                return PickupResponse.NotCaptain(captain.Username);
-
-            if (Captains.GetPlayer(captain).TeamId != PickingCaptain.TeamId)
-                return PickupResponse.NotPick(user.Username);
-
-            if (!PlayerPool.ContainsPlayer(user))
-                return PickupResponse.NotInPlayerList(user.Username);
-
+            var validator = new PickPlayerValidator();
+            var validationResponse = validator.Validate(this, captain, user);
+            if (validationResponse != null)
+                return validationResponse;
+            
             var pickedPlayer = PlayerPool.GetPlayer(user);
             CurrentGame.AddToCaptainsTeam(PickingCaptain, pickedPlayer);
             
