@@ -41,6 +41,13 @@ namespace PickupGameBot.Modules
             await ReplyAsync(response.Messages.First());
         }
         
+        [Command("teamsize"), Summary("Set team size")]
+        public async Task SetTeamSize([Remainder, Summary("The teamsize value")] string value)
+        {
+            var response = _pickupService.SetTeamSize(Context, value);
+            await ReplyAsync(response.Messages.First());
+        }
+        
         [Command("fadd"), Summary("Force add player")]
         public async Task ForceAdd([Remainder, Summary("The user to force add")] IUser user)
         {
