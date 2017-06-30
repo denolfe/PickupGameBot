@@ -31,7 +31,7 @@ namespace PickupGameBot.Modules
         public async Task EnablePickups()
         {
             var response = _pickupService.EnablePickups(Context);
-            await ReplyAsync(response.Messages.First());
+            await ReplyAsync("Pickup Game Bot Enabled", embed: StaticMessages.Welcome());
         }
         
         [Command("disable"), Summary("Disable pickups in current channel")]
