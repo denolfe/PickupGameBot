@@ -21,6 +21,8 @@ namespace PickupGameBot.Entities
         public Game LastGame { get; set; }
         private int _pickNumber = 1;
         private int _preferredTeamSize = 0;
+        private PickMode _pickMode = PickMode.SecondPicksTwice;
+        private CaptainMode _captainMode = CaptainMode.Default;
 
         public bool HasMinimumPlayers => PlayerPool.Count >= CurrentGame.MinimumPlayers;
         public bool HasEnoughEligibleCaptains => PlayerPool.Count(p => p.WantsCaptain) >= 2 || Captains.Count == 2;
@@ -168,6 +170,7 @@ namespace PickupGameBot.Entities
                 return PickupResponse.Bad("Invalid value for team size.");
         }
         
+        // TODO: Use CaptainMode
         private void SelectCaptains(bool enoughEligibleCaptains)
         {
             if (enoughEligibleCaptains)
@@ -199,6 +202,7 @@ namespace PickupGameBot.Entities
             }
         }
         
+        // TODO: Use CaptainMode
         private void AssignCaptains()
         {
             Captains.ElementAt(0).TeamId = 1;
@@ -215,6 +219,8 @@ namespace PickupGameBot.Entities
                 return;
 
             _pickNumber++;
+            
+            // TODO: Use PickMode
             var pickMap = new Dictionary<int, int>
             {
                 {1, 1}, // Should never happen, set initially to 1
@@ -241,5 +247,15 @@ namespace PickupGameBot.Entities
                 CurrentGame,
                 puResponse
             );
+
+        public PickupResponse SetPickMode(string value)
+        {
+            throw new NotImplementedException();
+        }
+
+        public PickupResponse SetCaptainMode(string value)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
