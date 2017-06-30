@@ -109,22 +109,10 @@ namespace PickupGameBot.Tests.Tests
             _context.User = user;
             _service.AddPlayer(_context, true);
 
-            _service.SetTeamSize(_context, "12");
+            _service.SetTeamSize(_context, "6");
             
             var pickupChannel = _service.GetPickupChannel(_context);
             Assert.Equal(12, pickupChannel.CurrentGame.MinimumPlayers);
-        }
-        
-        [Fact]
-        public void CannotSetTeamSizeIfUneven()
-        {
-            var user = UserStub.Generate(_rand);
-            _context.User = user;
-            _service.AddPlayer(_context, true);
-
-            _service.SetTeamSize(_context, "11");
-            var pickupChannel = _service.GetPickupChannel(_context);
-            Assert.Equal(10, pickupChannel.CurrentGame.MinimumPlayers); // Should be default team size
         }
     }
 }

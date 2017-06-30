@@ -130,7 +130,7 @@ namespace PickupGameBot.Entities
                 LastGame = CurrentGame;
             }
             
-            CurrentGame = _preferredTeamSize == 0 ? new Game() : new Game(_preferredTeamSize);
+            CurrentGame = _preferredTeamSize == 0 ? new Game() : new Game(_preferredTeamSize*2);
             _pickNumber = 1;
             PickupState = PickupState.Gathering;
             return removedPlayers;
@@ -155,17 +155,14 @@ namespace PickupGameBot.Entities
             int teamSize;
             var isNumber = int.TryParse(value, out teamSize);
 
-            if (teamSize % 2 != 0)
-                return PickupResponse.Bad("Team size must be an even number");
-
-            if (teamSize < PlayerPool.Count)
-                return PickupResponse.Bad("Team size cannot be less than players in the pool.");
+            if (teamSize*2 < PlayerPool.Count)
+                return PickupResponse.Bad("Team size cannot be set to less than players in the pool.");
 
             if (isNumber)
             {
-                CurrentGame.MinimumPlayers = teamSize;
+                CurrentGame.MinimumPlayers = teamSize*2;
                 _preferredTeamSize = teamSize;
-                return PickupResponse.Good($"Team size successfully set to **{CurrentGame.MinimumPlayers}**");
+                return PickupResponse.Good($"Team size successfully set to **{CurrentGame.MinimumPlayers/2}**");
             }
             else
                 return PickupResponse.Bad("Invalid value for team size.");
