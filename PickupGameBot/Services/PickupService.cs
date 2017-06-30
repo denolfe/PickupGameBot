@@ -87,6 +87,18 @@ namespace PickupGameBot.Services
             try {return GetPickupChannel(context).SetTeamSize(value);}
             catch(Exception e ) { return PickupResponse.NoPickupsForChannel; }
         }
+        
+        public PickupResponse SetPickMode(ICommandContext context, string value)
+        {
+            try {return GetPickupChannel(context).SetPickMode(value);}
+            catch(Exception e ) { return PickupResponse.NoPickupsForChannel; }
+        }
+        
+        public PickupResponse SetCaptainMode(ICommandContext context, string value)
+        {
+            try {return GetPickupChannel(context).SetCaptainMode(value);}
+            catch(Exception e ) { return PickupResponse.NoPickupsForChannel; }
+        }
 
 //        private PickupStatus BuildPickupStatus(PickupResponse puResponse)
 //        {
