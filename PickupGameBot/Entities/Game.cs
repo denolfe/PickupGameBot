@@ -39,6 +39,11 @@ namespace PickupGameBot.Entities
             Teams[captain.TeamId].AddPlayer(player);
         }
 
+        public void AddToTeamById(int teamId, PugPlayer player)
+        {
+            Teams[teamId].AddPlayer(player);
+        }
+
         public PugPlayer GetCaptainFromId(int id)
         {
             return Teams[id].Captain;

@@ -88,7 +88,7 @@ namespace PickupGameBot.Services
             catch(Exception e ) { return PickupResponse.NoPickupsForChannel; }
         }
         
-        public PickupResponse SetPickMode(ICommandContext context, string value)
+        public PickupResponse SetPickMode(ICommandContext context, int value)
         {
             try {return GetPickupChannel(context).SetPickMode(value);}
             catch(Exception e ) { return PickupResponse.NoPickupsForChannel; }
