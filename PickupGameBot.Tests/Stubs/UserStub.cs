@@ -17,7 +17,7 @@ namespace PickupGameBot.Tests.Stubs
         public static UserStub Generate(Random rand)
             => new Faker<UserStub>()
                 .RuleFor(u => u.Username, f => f.Name.FirstName())
-                .RuleFor(u => u.Mention, (f, u) => $"@{u.Mention}")
+                .RuleFor(u => u.Mention, (f, u) => $"@{u.Username}")
                 .RuleFor(u => u.Id, f => rand.NextUInt64());
         
         public string GetAvatarUrl(ImageFormat format = ImageFormat.Auto, ushort size = 128)

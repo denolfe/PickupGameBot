@@ -28,7 +28,7 @@ namespace PickupGameBot.Entities
         
         public string ToMentionString()
         {
-            var captainFlag = WantsCaptain || IsCaptain ? "*" : string.Empty;
+            var captainFlag = IsCaptain ? "*" : string.Empty;
             return $"{User.Mention}{captainFlag}";
         }
     }

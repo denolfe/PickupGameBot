@@ -278,12 +278,6 @@ namespace PickupGameBot.Entities
             throw new NotImplementedException();
         }
 
-//        private Game Clone() 
-//            => new Game(CurrentGame.MinimumPlayers)
-//                {
-//                    Teams = this.CurrentGame.Teams,
-//                    Picked = true
-//                };
         public PickupResponse AddAdminGroup(IRole role)
         {
             AdminGroups.Add(role);

@@ -14,13 +14,8 @@ namespace PickupGameBot.Preconditions
     {
         public class RequireElevatedUserAttribute : PreconditionAttribute
         {
-#pragma warning disable 649
-            private IServiceProvider _provider;
-#pragma warning restore 649
-
             public override Task<PreconditionResult> CheckPermissions(ICommandContext context, CommandInfo command, IServiceProvider services)
             {
-                var service = new PickupService(_provider);
                 if (context.Guild == null)
                     return Task.FromResult(PreconditionResult.FromError("This command may only be run in a guild."));
 
@@ -29,7 +24,6 @@ namespace PickupGameBot.Preconditions
 //                if (!config.GuildRoleMap.TryGetValue(context.Guild.Id, out IEnumerable<ulong> roles))
 //                    return Task.FromResult(PreconditionResult.FromError("This guild does not have a whitelist."));
 
-                // TODO: Ability to add and store whitelisted roles
                 var socketGuildUser = context.User as SocketGuildUser;
                 var permittedRoles = services.GetService<PickupService>()?.GetPickupChannel(context)?.AdminGroups;
                 return Task.FromResult(
