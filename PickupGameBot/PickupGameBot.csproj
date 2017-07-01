@@ -11,4 +11,12 @@
       <Version>4.4.0-preview1-25305-02</Version>
     </PackageReference>
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Config" />
+    <Folder Include="Entities\PickModes" />
+    <Folder Include="Enums" />
+    <Folder Include="Extensions" />
+    <Folder Include="Utility" />
+    <Folder Include="Validators" />
+  </ItemGroup>
 </Project>

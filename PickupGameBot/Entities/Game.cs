@@ -17,6 +17,12 @@ namespace PickupGameBot.Entities
             Teams = new Dictionary<int, Team>();
         }
 
+        public Game(Dictionary<int, Team> teams)
+        {
+            Teams = teams;
+            Picked = true;
+        }
+
         /// <summary>
         /// Creates teams from list of captains
         /// </summary>
@@ -27,6 +33,12 @@ namespace PickupGameBot.Entities
             {
                 Teams.Add(captain.TeamId, new Team(captain.TeamId, captain, MinimumPlayers/2));
             }
+        }
+
+        public void CreateTeams()
+        {
+            Teams.Add(1, new Team(1, MinimumPlayers/2));
+            Teams.Add(2, new Team(2, MinimumPlayers/2));
         }
         
         /// <summary>
@@ -79,6 +91,9 @@ namespace PickupGameBot.Entities
 
             return Teams[1].IsFull() && Teams[2].IsFull();
         }
+
+        public Game Clone()
+            => new Game(Teams);
 
         public override string ToString()
         {
