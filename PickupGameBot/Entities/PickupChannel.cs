@@ -117,6 +117,8 @@ namespace PickupGameBot.Entities
 
         public PickupResponse DraftRandomTeams()
         {
+            CurrentGame.CreateTeams();
+            
             var count = 0;
             while (!CurrentGame.BothTeamsAreFull())
             {
@@ -125,12 +127,11 @@ namespace PickupGameBot.Entities
                 count++;
             }
             
-//            if (CurrentGame.BothTeamsAreFull())
-//            {
-                var gameString = CurrentGame.ToString();
-                PickingFinished();
-                return PickupResponse.PickingCompleted(gameString);
-//            }
+            var gameString = CurrentGame.ToString();
+            LastGame = CurrentGame.Clone();
+            _pickNumber = 1;
+            PickupState = PickupState.Gathering;
+            return PickupResponse.PickingCompleted(gameString);
             
         }
 
@@ -144,16 +145,13 @@ namespace PickupGameBot.Entities
 
         private List<PugPlayer> PickingFinished(bool resetFlag = false)
         {
+            if (!resetFlag)
+                LastGame = CurrentGame.Clone();
+            
             var removedPlayers = CurrentGame.RemoveTeams();
             removedPlayers.AddRange(PlayerPool);
             PlayerPool = new List<PugPlayer>();
             Captains = new List<PugPlayer>();
-            
-            if (!resetFlag)
-            {
-                CurrentGame.Picked = true;
-                LastGame = CurrentGame;
-            }
             
             CurrentGame = _preferredTeamSize == 0 ? new Game() : new Game(_preferredTeamSize*2);
             _pickNumber = 1;
@@ -278,5 +276,12 @@ namespace PickupGameBot.Entities
         {
             throw new NotImplementedException();
         }
+
+//        private Game Clone() 
+//            => new Game(CurrentGame.MinimumPlayers)
+//                {
+//                    Teams = this.CurrentGame.Teams,
+//                    Picked = true
+//                };
     }
 }

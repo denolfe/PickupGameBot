@@ -26,7 +26,7 @@ namespace PickupGameBot.Services
             _provider = provider;
         }
         
-        public PickupResponse EnablePickups(ICommandContext context) 
+        public PickupResponse EnablePickups(ICommandContext context)
         {
             var channel = GetPickupChannel(context);
             if (channel != null) 
