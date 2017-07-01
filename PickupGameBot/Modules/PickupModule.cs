@@ -58,11 +58,10 @@ namespace PickupGameBot.Modules
                     .WithValue(response.Messages.First())));
         }
 
-//        [Command("help"), Summary("Show basic commands")]
-//        public async Task Help()
-//        {
-//            var response = _pickupService.EnablePickups(Context);
-//            await ReplyAsync("Help Commands:", embed: StaticMessages.Welcome());
-//        }
+        [Command("help"), Summary("Show basic commands")]
+        public async Task Help()
+        {
+            await ReplyAsync("", embed: StaticMessages.Help());
+        }
     }
 }
