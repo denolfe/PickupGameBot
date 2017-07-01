@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -100,8 +101,9 @@ namespace PickupGameBot.Entities
             var builder = new StringBuilder();
             Teams
                 .Select(t => t.Value).ToList()
-                .ForEach(team => builder.Append(team.ToString()));
-            return builder.ToString();
+                .ForEach(team => builder.Append($"{team.Formatted()}{Environment.NewLine}"));
+            var s = builder.ToString();
+            return s;
         }
     }
 }
