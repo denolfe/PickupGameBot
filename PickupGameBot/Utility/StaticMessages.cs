@@ -11,6 +11,8 @@ namespace PickupGameBot.Utility
                 .WithDescription("**Admin Commands**")
                 .AddField("!teamsize <int>",
                     "Set size of teams (default: 5)")
+                .AddField("!addadminrole",
+                    "Add role as admin for pickup games")
                 .AddField("!pickmode <1|2|3>",
                     $"1 - Every Other (default){Environment.NewLine}" +
                     $"2 - Second Captain Picks Twice{Environment.NewLine}" +

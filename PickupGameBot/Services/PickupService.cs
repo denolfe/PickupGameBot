@@ -99,6 +99,12 @@ namespace PickupGameBot.Services
             try {return GetPickupChannel(context).SetCaptainMode(value);}
             catch(Exception e ) { return PickupResponse.NoPickupsForChannel; }
         }
+        
+        public PickupResponse AddAdminRole(ICommandContext context, IRole role)
+        {
+            try {return GetPickupChannel(context).AddAdminGroup(role);}
+            catch(Exception e ) { return PickupResponse.NoPickupsForChannel; }
+        }
 
 //        private PickupStatus BuildPickupStatus(PickupResponse puResponse)
 //        {

@@ -89,7 +89,13 @@ namespace PickupGameBot.Modules
         {
             var response = _pickupService.SetPickMode(Context, mode);
             await ReplyAsync(response.Messages.First());
+        }
 
+        [Command("addadminrole"), Summary("Add role as admin for pickup games")]
+        public async Task SetAdminGroup([Remainder, Summary("The teamsize value")] IRole role)
+        {
+            var response = _pickupService.AddAdminRole(Context, role);
+            await ReplyAsync(response.Messages.First());
         }
     }
 }
