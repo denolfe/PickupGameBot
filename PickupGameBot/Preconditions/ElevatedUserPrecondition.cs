@@ -31,13 +31,16 @@ namespace PickupGameBot.Preconditions
 
                 // TODO: Ability to add and store whitelisted roles
                 var socketGuildUser = context.User as SocketGuildUser;
-                var permittedRoles = services.GetService<PickupService>().GetPickupChannel(context).AdminGroups;
+                var permittedRoles = services.GetService<PickupService>()?.GetPickupChannel(context)?.AdminGroups;
                 return Task.FromResult(
-                    socketGuildUser != null 
-                    && (!socketGuildUser.GetPermissions(context.Channel as SocketGuildChannel).ManageChannel
-                        || !socketGuildUser.Roles.Intersect(permittedRoles).Any())
-                        ? PreconditionResult.FromError("You do not have permissions to manage this channel.") 
-                        : PreconditionResult.FromSuccess());
+                    socketGuildUser != null
+                    && (
+                        socketGuildUser.GetPermissions(context.Channel as SocketGuildChannel).ManageChannel // Can manage the channel
+                        ||
+                        socketGuildUser.Roles.Intersect(permittedRoles).Any() // User has role that has been added as pug admin
+                    )
+                        ? PreconditionResult.FromSuccess()
+                        : PreconditionResult.FromError("You do not have permissions to manage this channel."));
             }
         }
     }
