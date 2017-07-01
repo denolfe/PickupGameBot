@@ -83,5 +83,13 @@ namespace PickupGameBot.Modules
             var response = _pickupService.Reset(Context);
             await ReplyAsync(response.JoinedMessages);
         }
+
+        [Command("pickmode"), Summary("Set the desired pick mode")]
+        public async Task SetPickMode([Remainder, Summary("The teamsize value")] int mode)
+        {
+            var response = _pickupService.SetPickMode(Context, mode);
+            await ReplyAsync(response.Messages.First());
+
+        }
     }
 }

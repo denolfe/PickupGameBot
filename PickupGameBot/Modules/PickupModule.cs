@@ -52,14 +52,17 @@ namespace PickupGameBot.Modules
         public async Task List()
         {
             var response = _pickupService.Status(Context);
-            await ReplyAsync(response.Messages.First());
+            await ReplyAsync("", embed: new EmbedBuilder().WithColor(new Color(0, 255, 0))
+                .AddField(new EmbedFieldBuilder()
+                    .WithName("Player Pool")
+                    .WithValue(response.Messages.First())));
         }
 
-        [Command("help"), Summary("Show basic commands")]
-        public async Task Help()
-        {
-            var response = _pickupService.EnablePickups(Context);
-            await ReplyAsync("Help Commands:", embed: StaticMessages.Welcome());
-        }
+//        [Command("help"), Summary("Show basic commands")]
+//        public async Task Help()
+//        {
+//            var response = _pickupService.EnablePickups(Context);
+//            await ReplyAsync("Help Commands:", embed: StaticMessages.Welcome());
+//        }
     }
 }
