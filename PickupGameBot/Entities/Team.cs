@@ -55,7 +55,7 @@ namespace PickupGameBot.Entities
         {
             var builder = new StringBuilder();
             builder.Append($"Team {Id}: ");
-            Players.ForEach(p => builder.Append(p.ToMentionString()));
+            builder.Append(string.Join(",", Players.Select(p => p.ToMentionString())));
             return builder.ToString();
         }
     }
