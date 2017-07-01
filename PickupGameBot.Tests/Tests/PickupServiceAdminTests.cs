@@ -4,6 +4,7 @@ using System.Linq;
 using System.Windows.Input;
 using Discord;
 using Discord.Commands;
+using Discord.WebSocket;
 using PickupGameBot.Enums;
 using PickupGameBot.Services;
 using PickupGameBot.Tests.Stubs;
@@ -114,5 +115,15 @@ namespace PickupGameBot.Tests.Tests
             var pickupChannel = _service.GetPickupChannel(_context);
             Assert.Equal(12, pickupChannel.CurrentGame.MinimumPlayers);
         }
+
+        // TODO: Implement this test
+//        [Fact]
+//        public void CanAddAdminRole()
+//        {
+//            var user = UserStub.Generate(_rand);
+//            _context.User = user;
+//            _service.EnablePickups(_context);
+//            _service.AddAdminRole();
+//        }
     }
 }
