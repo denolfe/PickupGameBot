@@ -177,13 +177,58 @@ namespace PickupGameBot.Tests.Tests
         }
 
         [Fact]
-        public void ShouldAlternatePicksCorrectly()
+        public void ShouldAlternatePicksCorrectlyForEveryOther()
         {
             for (int i = 0; i < 10; i++)
             {
                 var user = UserStub.Generate(_rand);
                 var response = _channel.AddPlayerToPool(user, i < 5);
             }
+
+            _channel.SetPickMode(1);
+            
+            // Picking Order: Team 1 pick
+            //                Team 2 pick
+            //                Team 1 pick
+            //                Team 2 pick
+            //                Etc.
+            
+            var randomPlayerInPool = _channel.PlayerPool.OrderBy(x => Guid.NewGuid()).Take(1).FirstOrDefault();
+            var pickResponse = _channel.PickPlayer(_channel.PickingCaptain.User, randomPlayerInPool.User);
+            Assert.True(pickResponse.Success);
+            Assert.Equal(2, _channel.CurrentGame.Teams[1].Players.Count); // Captain + 1 Player
+            Assert.Equal(7, _channel.PlayerPool.Count);
+            
+            var randomPlayerInPool2 = _channel.PlayerPool.OrderBy(x => Guid.NewGuid()).Take(1).FirstOrDefault();
+            var pickResponse2 = _channel.PickPlayer(_channel.PickingCaptain.User, randomPlayerInPool2.User);
+            Assert.True(pickResponse2.Success);
+            Assert.Equal(2, _channel.CurrentGame.Teams[2].Players.Count); // Captain + 1 Player
+            Assert.Equal(6, _channel.PlayerPool.Count);
+            
+            var randomPlayerInPool3 = _channel.PlayerPool.OrderBy(x => Guid.NewGuid()).Take(1).FirstOrDefault();
+            var pickResponse3 = _channel.PickPlayer(_channel.PickingCaptain.User, randomPlayerInPool3.User);
+            Assert.True(pickResponse3.Success);
+            Assert.Equal(3, _channel.CurrentGame.Teams[1].Players.Count); // Captain + 2 Player
+            Assert.Equal(5, _channel.PlayerPool.Count);
+            
+            var randomPlayerInPool4 = _channel.PlayerPool.OrderBy(x => Guid.NewGuid()).Take(1).FirstOrDefault();
+            var pickResponse4 = _channel.PickPlayer(_channel.PickingCaptain.User, randomPlayerInPool4.User);
+            Assert.True(pickResponse4.Success);
+            Assert.Equal(3, _channel.CurrentGame.Teams[2].Players.Count); // Captain + 2 Player
+            Assert.Equal(3, _channel.CurrentGame.Teams[2].Players.Count); // Captain + 2 Player
+            Assert.Equal(4, _channel.PlayerPool.Count);
+        }
+        
+        [Fact]
+        public void ShouldAlternatePicksCorrectlyForSecondPicksTwice()
+        {
+            for (int i = 0; i < 10; i++)
+            {
+                var user = UserStub.Generate(_rand);
+                var response = _channel.AddPlayerToPool(user, i < 5);
+            }
+
+            _channel.SetPickMode(2);
             
             // Picking Order: Team 1 pick
             //                Team 2 pick
@@ -215,6 +260,52 @@ namespace PickupGameBot.Tests.Tests
             Assert.Equal(3, _channel.CurrentGame.Teams[1].Players.Count); // Captain + 2 Player
             Assert.Equal(3, _channel.CurrentGame.Teams[2].Players.Count); // Captain + 2 Player
             Assert.Equal(4, _channel.PlayerPool.Count);
+        }
+        
+        [Fact]
+        public void ShouldAllowRandomlyPickedTeams()
+        {
+            _channel.SetPickMode(3);
+            
+            for (int i = 0; i < 10; i++)
+            {
+                var user = UserStub.Generate(_rand);
+                var response = _channel.AddPlayerToPool(user, i < 5);
+            }
+
+            Assert.Equal(5, _channel.CurrentGame.Teams[1].Players.Count); // Full Team
+            Assert.Equal(5, _channel.CurrentGame.Teams[2].Players.Count); // Full Team
+            
+            // Picking Order: Team 1 pick
+            //                Team 2 pick
+            //                Team 2 pick
+            //                Team 1 pick
+            //                Alternate...
+            
+//            var randomPlayerInPool = _channel.PlayerPool.OrderBy(x => Guid.NewGuid()).Take(1).FirstOrDefault();
+//            var pickResponse = _channel.PickPlayer(_channel.PickingCaptain.User, randomPlayerInPool.User);
+//            Assert.True(pickResponse.Success);
+//            Assert.Equal(2, _channel.CurrentGame.Teams[1].Players.Count); // Captain + 1 Player
+//            Assert.Equal(7, _channel.PlayerPool.Count);
+//            
+//            var randomPlayerInPool2 = _channel.PlayerPool.OrderBy(x => Guid.NewGuid()).Take(1).FirstOrDefault();
+//            var pickResponse2 = _channel.PickPlayer(_channel.PickingCaptain.User, randomPlayerInPool2.User);
+//            Assert.True(pickResponse2.Success);
+//            Assert.Equal(2, _channel.CurrentGame.Teams[2].Players.Count); // Captain + 1 Player
+//            Assert.Equal(6, _channel.PlayerPool.Count);
+//            
+//            var randomPlayerInPool3 = _channel.PlayerPool.OrderBy(x => Guid.NewGuid()).Take(1).FirstOrDefault();
+//            var pickResponse3 = _channel.PickPlayer(_channel.PickingCaptain.User, randomPlayerInPool3.User);
+//            Assert.True(pickResponse3.Success);
+//            Assert.Equal(3, _channel.CurrentGame.Teams[2].Players.Count); // Captain + 2 Player
+//            Assert.Equal(5, _channel.PlayerPool.Count);
+//            
+//            var randomPlayerInPool4 = _channel.PlayerPool.OrderBy(x => Guid.NewGuid()).Take(1).FirstOrDefault();
+//            var pickResponse4 = _channel.PickPlayer(_channel.PickingCaptain.User, randomPlayerInPool4.User);
+//            Assert.True(pickResponse4.Success);
+//            Assert.Equal(3, _channel.CurrentGame.Teams[1].Players.Count); // Captain + 2 Player
+//            Assert.Equal(3, _channel.CurrentGame.Teams[2].Players.Count); // Captain + 2 Player
+//            Assert.Equal(4, _channel.PlayerPool.Count);
         }
         
         [Fact]

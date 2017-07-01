@@ -41,6 +41,14 @@ namespace PickupGameBot.Extensions
             return playerList.GetPlayer(player.User);
         }
         
+        public static PugPlayer GetRandomPlayer(this List<PugPlayer> playerList)
+        {
+            return playerList
+                .OrderBy(x => Guid.NewGuid())
+                .Take(1)
+                .SingleOrDefault();
+        }
+        
         /// <summary>
         /// Returns specified PugPlayer by IUser
         /// </summary>

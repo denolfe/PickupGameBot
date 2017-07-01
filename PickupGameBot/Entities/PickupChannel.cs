@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Discord;
+using PickupGameBot.Entities.PickModes;
 using PickupGameBot.Enums;
 using PickupGameBot.Extensions;
 using PickupGameBot.Utility;
@@ -21,7 +22,7 @@ namespace PickupGameBot.Entities
         public Game LastGame { get; set; }
         private int _pickNumber = 1;
         private int _preferredTeamSize = 0;
-        private PickMode _pickMode = PickMode.SecondPicksTwice;
+        private IPickMode _pickMode = new EveryOtherPickMode();
         private CaptainMode _captainMode = CaptainMode.Default;
 
         public bool HasMinimumPlayers => PlayerPool.Count >= CurrentGame.MinimumPlayers;
@@ -47,6 +48,9 @@ namespace PickupGameBot.Entities
        
         private PickupResponse StartPicking(string playerJoinString)
         {
+            if (_pickMode.Name == "Random")
+                return DraftRandomTeams();
+            
             PickupState = PickupState.Picking;
             SelectCaptains(HasEnoughEligibleCaptains);
             AssignCaptains();
@@ -109,6 +113,25 @@ namespace PickupGameBot.Entities
             return PickupResponse.Good($"{user.Username} has been picked by {captain.Username}"+
                                                          $" to Team {Captains.GetPlayer(captain).TeamId}\n" +
                                                          $"{PickingCaptain.User.Username}'s Pick");
+        }
+
+        public PickupResponse DraftRandomTeams()
+        {
+            var count = 0;
+            while (!CurrentGame.BothTeamsAreFull())
+            {
+                var randomPlayer = PlayerPool.GetRandomPlayer();
+                CurrentGame.AddToTeamById(count % 2 == 0 ? 1 : 2, randomPlayer);
+                count++;
+            }
+            
+//            if (CurrentGame.BothTeamsAreFull())
+//            {
+                var gameString = CurrentGame.ToString();
+                PickingFinished();
+                return PickupResponse.PickingCompleted(gameString);
+//            }
+            
         }
 
         public PickupResponse Reset()
@@ -217,27 +240,8 @@ namespace PickupGameBot.Entities
         {
             if (_pickNumber >= CurrentGame.MinimumPlayers)
                 return;
-
             _pickNumber++;
-            
-            // TODO: Use PickMode
-            var pickMap = new Dictionary<int, int>
-            {
-                {1, 1}, // Should never happen, set initially to 1
-                {2, 2},
-                {3, 2},
-                {4, 1},
-                {5, 2},
-                {6, 1},
-                {7, 2},
-                {8, 1},
-                {9, 2},
-                {10, 1},
-                {11, 1},
-                {12, 1}
-            };
-
-            PickingCaptain = CurrentGame.GetCaptainFromId(pickMap[_pickNumber]);
+            PickingCaptain = CurrentGame.GetCaptainFromId(_pickMode.PickMap[_pickNumber]);
         }
 
         private PickupStatus BuildPickupStatus(PickupResponse puResponse) 
@@ -248,9 +252,26 @@ namespace PickupGameBot.Entities
                 puResponse
             );
 
-        public PickupResponse SetPickMode(string value)
+        public PickupResponse SetPickMode(int value)
         {
-            throw new NotImplementedException();
+            // TODO: Make a facilitator for this
+            switch (value)
+            {
+                case 3:
+                    _pickMode = new RandomPickMode();
+                    break;
+                case 2:
+                    _pickMode = new SecondPicksTwicePickMode();
+                    break;
+                case 1:
+                    _pickMode = new EveryOtherPickMode();
+                    break;
+                default:
+                    _pickMode = new EveryOtherPickMode();
+                    break;
+            }
+
+            return PickupResponse.Good($"Pick Mode changed to: {_pickMode.Name}");
         }
 
         public PickupResponse SetCaptainMode(string value)
