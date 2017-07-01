@@ -19,6 +19,12 @@ namespace PickupGameBot.Entities
             Players.Add(captain);
         }
 
+        public Team(int id, int maxPlayers)
+        {
+            Id = id;
+            MaxPlayers = maxPlayers;
+        }
+
         public void AddPlayer(PugPlayer player) => Players.Add(player);
         public bool IsFull() => Players.Count == MaxPlayers;
 
