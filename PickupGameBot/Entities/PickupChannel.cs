@@ -24,6 +24,7 @@ namespace PickupGameBot.Entities
         private int _preferredTeamSize = 0;
         private IPickMode _pickMode = new EveryOtherPickMode();
         private CaptainMode _captainMode = CaptainMode.Default;
+        public List<IRole> AdminGroups = new List<IRole>();
 
         public bool HasMinimumPlayers => PlayerPool.Count >= CurrentGame.MinimumPlayers;
         public bool HasEnoughEligibleCaptains => PlayerPool.Count(p => p.WantsCaptain) >= 2 || Captains.Count == 2;
@@ -283,5 +284,10 @@ namespace PickupGameBot.Entities
 //                    Teams = this.CurrentGame.Teams,
 //                    Picked = true
 //                };
+        public PickupResponse AddAdminGroup(IRole role)
+        {
+            AdminGroups.Add(role);
+            return PickupResponse.Good($"{role.Name} added as pickup admin role");
+        }
     }
 }
