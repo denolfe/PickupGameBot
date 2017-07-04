@@ -85,16 +85,12 @@ namespace PickupGameBot.Services
             channel.Config.Enabled = false;
             _db.ChannelConfigs.Update(channel.Config);
             _db.SaveChanges();
-//            var prev = CheckForPreviousConfig(context);
             return PickupResponse.PickupsDisabled(context.Channel.Name);
         }
 
         public PickupResponse AddPlayer(ICommandContext context, bool wantsCaptain)
         {
-            try
-            {
-                return GetPickupChannel(context).AddPlayerToPool(context.User, wantsCaptain);
-            }
+            try { return GetPickupChannel(context).AddPlayerToPool(context.User, wantsCaptain); }
             catch(Exception e ) { return PickupResponse.NoPickupsForChannel;}
         }
         
@@ -152,20 +148,6 @@ namespace PickupGameBot.Services
             catch(Exception e ) { return PickupResponse.NoPickupsForChannel; }
         }
 
-//        private PickupStatus BuildPickupStatus(PickupResponse puResponse)
-//        {
-//            return new PickupStatus(
-//                PickupState,
-//                _minimumPlayers,
-//                Captains,
-//                PlayerPool,
-//                Team1,
-//                Team2,
-//                BothTeamsAreFull(),
-//                puResponse
-//            );
-//        }
-
         public PickupResponse Repick(ICommandContext context)
         {
             var channel = GetPickupChannel(context);
@@ -174,7 +156,6 @@ namespace PickupGameBot.Services
                 : PickupResponse.PickingRestarted;
         }
 
-        // TODO: Mention all players that were in pool
         public PickupResponse Reset(ICommandContext context)
         {
             var channel = GetPickupChannel(context);
