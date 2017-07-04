@@ -24,7 +24,8 @@ namespace PickupGameBot.Tests.Tests
         {
             _rand = new Random();
             _messageChannel = MessageChannelStub.Generate(_rand);
-            _channel = new PickupChannel(_messageChannel);
+            _channel = new PickupChannel(_provider, _messageChannel);
+//            _channel = new PickupChannel(_messageChannel);
         }
 
         private PugPlayer GetRandomPlayer() 

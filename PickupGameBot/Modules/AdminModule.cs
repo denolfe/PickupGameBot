@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Discord;
 using Discord.Commands;
+using PickupGameBot.Databases;
 using PickupGameBot.Entities;
 using PickupGameBot.Extensions;
 using PickupGameBot.Preconditions;
@@ -15,6 +16,7 @@ namespace PickupGameBot.Modules
     public class AdminModule : ModuleBase
     {
         private readonly PickupService _pickupService;
+        private readonly ChannelDatabase _db;
 
 //        private Task BuildMessageAsync(PickupStatus response)
 //        {

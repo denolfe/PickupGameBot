@@ -78,6 +78,11 @@ namespace PickupGameBot.Tests.Stubs
             throw new NotImplementedException();
         }
 
+        public Task DeleteMessagesAsync(IEnumerable<ulong> messageIds, RequestOptions options = null)
+        {
+            throw new NotImplementedException();
+        }
+
         public Task TriggerTypingAsync(RequestOptions options = null)
         {
             throw new NotImplementedException();
