@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
-using DiscordPugBotcore;
 using PickupGameBot.Entities;
 using PickupGameBot.Utility;
 using Microsoft.Extensions.DependencyInjection;
@@ -31,8 +30,6 @@ namespace PickupGameBot.Services
         public async Task StartAsync()
         {
             PrettyConsole.Log(LogSeverity.Info, "Commands", $"Loading commands");
-
-            _commands.AddTypeReader<Uri>(new UriTypeReader());
 
             await _commands.AddModulesAsync(Assembly.GetEntryAssembly());
             await _commands.AddModulesAsync(typeof(Entity<>).GetTypeInfo().Assembly);

@@ -5,6 +5,7 @@ using Discord.Commands;
 using Discord.WebSocket;
 using PickupGameBot.Utility;
 using Microsoft.Extensions.DependencyInjection;
+using PickupGameBot.Databases;
 
 namespace PickupGameBot.Services
 {
@@ -31,6 +32,7 @@ namespace PickupGameBot.Services
             var config = Configuration.Load();
 
             var services = new ServiceCollection()
+                .AddDbContext<ChannelDatabase>(ServiceLifetime.Transient)
                 .AddSingleton<CommandHandler>()
                 .AddSingleton<PickupService>()
                 .AddSingleton(_client)

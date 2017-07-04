@@ -1,8 +1,11 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using Discord;
+using Microsoft.Extensions.DependencyInjection;
+using PickupGameBot.Databases;
 using PickupGameBot.Entities.PickModes;
 using PickupGameBot.Enums;
 using PickupGameBot.Extensions;
@@ -14,6 +17,7 @@ namespace PickupGameBot.Entities
     public class PickupChannel
     {
         public IMessageChannel MessageChannel { get; set; }
+        public ChannelConfig Config { get; set; }
         public List<PugPlayer> PlayerPool { get; set; } = new List<PugPlayer>();
         public List<PugPlayer> Captains { get; set; } = new List<PugPlayer>();
         public PugPlayer PickingCaptain { get; set; }
@@ -21,10 +25,12 @@ namespace PickupGameBot.Entities
         public Game CurrentGame { get; set; }
         public Game LastGame { get; set; }
         private int _pickNumber = 1;
-        private int _preferredTeamSize = 0;
+//        private int _preferredTeamSize = 0;
         private IPickMode _pickMode = new EveryOtherPickMode();
         private CaptainMode _captainMode = CaptainMode.Default;
         public List<IRole> AdminGroups = new List<IRole>();
+        private readonly ChannelDatabase _db;
+        private readonly IServiceProvider _provider;
 
         public bool HasMinimumPlayers => PlayerPool.Count >= CurrentGame.MinimumPlayers;
         public bool HasEnoughEligibleCaptains => PlayerPool.Count(p => p.WantsCaptain) >= 2 || Captains.Count == 2;
@@ -34,10 +40,31 @@ namespace PickupGameBot.Entities
             ? string.Empty
             : $"Need {PlayersNeeded} more players.";
         
-        public PickupChannel(IMessageChannel chan)
+        public PickupChannel(IServiceProvider provider, IMessageChannel chan)
+//        public PickupChannel(IMessageChannel chan)
         {
-            MessageChannel = chan;
-            CurrentGame = new Game();
+            _provider = provider;
+            _db = _provider.GetService<ChannelDatabase>();
+            Config = new ChannelConfig
+            {
+                ChannelId = chan.Id,
+                Enabled = true,
+                PickModeId = _pickMode.Id,
+                TeamSize = Game.DefaultTeamSize
+            };
+            _db.ChannelConfigs.Add(Config);
+            _db.SaveChanges();
+            
+            CurrentGame = new Game(Config.TeamSize*2);
+        }
+
+        public PickupChannel(IServiceProvider provider, IMessageChannel chan, ChannelConfig config)
+//        public PickupChannel(IMessageChannel chan, ChannelConfig config)
+        {
+            _provider = provider;
+            _db = _provider.GetService<ChannelDatabase>();
+            Config = config;
+            CurrentGame = new Game(Config.TeamSize*2);
         }
 
         public PickupResponse GetStatus()
@@ -154,7 +181,7 @@ namespace PickupGameBot.Entities
             PlayerPool = new List<PugPlayer>();
             Captains = new List<PugPlayer>();
             
-            CurrentGame = _preferredTeamSize == 0 ? new Game() : new Game(_preferredTeamSize*2);
+            CurrentGame = new Game(Config.TeamSize*2);
             _pickNumber = 1;
             PickupState = PickupState.Gathering;
             return removedPlayers;
@@ -185,7 +212,10 @@ namespace PickupGameBot.Entities
             if (isNumber)
             {
                 CurrentGame.MinimumPlayers = teamSize*2;
-                _preferredTeamSize = teamSize;
+                Config.TeamSize = teamSize;
+
+                _db.ChannelConfigs.Update(Config);
+                _db.SaveChanges();
                 return PickupResponse.Good($"Team size successfully set to **{CurrentGame.MinimumPlayers/2}**");
             }
             else

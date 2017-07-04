@@ -11,6 +11,7 @@ namespace PickupGameBot.Entities
         public Dictionary<int, Team> Teams;
         public int MinimumPlayers;
         public bool Picked = false;
+        public static int DefaultTeamSize = 5;
 
         public Game(int minimumPlayers = 10)
         {
