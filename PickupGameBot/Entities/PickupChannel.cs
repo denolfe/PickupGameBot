@@ -52,7 +52,7 @@ namespace PickupGameBot.Entities
                 PickModeId = _pickMode.Id,
                 TeamSize = Game.DefaultTeamSize
             };
-            _db.ChannelConfigs.Add(Config);
+//            _db.ChannelConfigs.Add(Config);
             _db.SaveChanges();
             
             CurrentGame = new Game(Config.TeamSize*2);
