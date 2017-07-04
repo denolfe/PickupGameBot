@@ -23,6 +23,9 @@ namespace PickupGameBot.Tests.Stubs
         public string GetAvatarUrl(ImageFormat format = ImageFormat.Auto, ushort size = 128)
             => throw new NotImplementedException();
 
+        public Task<IDMChannel> GetOrCreateDMChannelAsync(RequestOptions options = null) 
+            => throw new NotImplementedException();
+
         public Task<IDMChannel> GetDMChannelAsync(CacheMode mode = CacheMode.AllowDownload, RequestOptions options = null) 
             => throw new NotImplementedException();
 
