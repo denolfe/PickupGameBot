@@ -58,12 +58,20 @@ namespace PickupGameBot.Services
 
             var config = _db.GetChannelConfig(context.Channel.Id);
 
-            PickupChannels.Add(config == null
-                ? new PickupChannel(_provider, context.Channel)
-                : new PickupChannel(_provider, context.Channel, config));
-
-//            PickupChannels.Add(new PickupChannel(_provider, context.Channel));
-//            PickupChannels.Add(new PickupChannel(context.Channel));
+            if (config == null)
+            {
+                PickupChannels.Add(new PickupChannel(_provider, context.Channel));
+            }
+            else
+            {
+                config.Enabled = true;
+                var newChannel = new PickupChannel(_provider, context.Channel, config);
+                PickupChannels.Add(newChannel);
+                
+                _db.ChannelConfigs.Update(config);
+                _db.SaveChanges();
+            }
+            
             return PickupResponse.PickupsEnabled(context.Channel.Name);
         }
         
