@@ -27,7 +27,10 @@ namespace PickupGameBot.Modules
         public async Task PickPlayer([Remainder] IUser user)
         {
             var response = _pickupService.PickPlayer(Context, user);
-            await ReplyAsync(response.Messages.First());
+            await ReplyAsync("", embed: new EmbedBuilder().WithColor(new Color(0, 255, 0))
+                .AddField(new EmbedFieldBuilder()
+                    .WithName("Player Pick")
+                    .WithValue(response.Messages.First())));
         }
         
         [Command("join"), Summary("Add player to player pool")]
@@ -36,7 +39,10 @@ namespace PickupGameBot.Modules
         {
             var wantsCaptain = captain?.Trim().ToLower() == "captain";
             var response = _pickupService.AddPlayer(Context, wantsCaptain);
-            await ReplyAsync(response.Messages.First());
+            await ReplyAsync("", embed: new EmbedBuilder().WithColor(new Color(0, 255, 0))
+                .AddField(new EmbedFieldBuilder()
+                    .WithName("Player Pool Changed")
+                    .WithValue(response.Messages.First())));
         }
 
         [Command("leave"), Summary("Remove player from player pool")]
@@ -44,7 +50,10 @@ namespace PickupGameBot.Modules
         public async Task Leave([Remainder] string captain = null)
         {
             var response = _pickupService.RemovePlayer(Context);
-            await ReplyAsync(response.Messages.First());
+            await ReplyAsync("", embed: new EmbedBuilder().WithColor(new Color(0, 255, 0))
+                .AddField(new EmbedFieldBuilder()
+                    .WithName("Player Pool Changed")
+                    .WithValue(response.Messages.First())));
         }
         
         [Command("status"), Summary("Show information about current pickup game")]
