@@ -4,6 +4,8 @@ using System.Linq;
 using System.Windows.Input;
 using Discord;
 using Discord.Commands;
+using Microsoft.Extensions.DependencyInjection;
+using PickupGameBot.Databases;
 using PickupGameBot.Entities;
 using PickupGameBot.Enums;
 using PickupGameBot.Extensions;
@@ -16,14 +18,36 @@ namespace PickupGameBot.Services
         public List<PickupChannel> PickupChannels { get; set; } = new List<PickupChannel>();
 
         private readonly IServiceProvider _provider;
+        private readonly ChannelDatabase _db;
 
-        public PickupChannel GetPickupChannel(ICommandContext context) 
-            => PickupChannels.FirstOrDefault(c => c.MessageChannel.Id == context.Channel.Id);
+        public PickupChannel GetPickupChannel(ICommandContext context)
+        {
+            var channel = PickupChannels.FirstOrDefault(c => c.Config.ChannelId == context.Channel.Id);
+            if (channel != null)
+                return channel;
+            
+            // Check if previously enabled
+            var channelConfig = CheckForPreviousConfig(context);
+            if (channelConfig.Enabled)
+            {
+                var newChannel = new PickupChannel(_provider, context.Channel, channelConfig);
+                PickupChannels.Add(newChannel);
+                return newChannel;
+            }
 
+            return null;
+        }
+
+        public ChannelConfig CheckForPreviousConfig(ICommandContext context)
+        {
+            var channelConfig = _db.GetChannelConfig(context.Channel.Id);
+            return channelConfig ?? ChannelConfig.GetDefault(context.Channel.Id);
+        }
 
         public PickupService(IServiceProvider provider)
         {
             _provider = provider;
+            _db = _provider.GetService<ChannelDatabase>();
         }
         
         public PickupResponse EnablePickups(ICommandContext context)
@@ -31,8 +55,23 @@ namespace PickupGameBot.Services
             var channel = GetPickupChannel(context);
             if (channel != null) 
                 return PickupResponse.PickupsWereAlreadyEnabled;
+
+            var config = _db.GetChannelConfig(context.Channel.Id);
+
+            if (config == null)
+            {
+                PickupChannels.Add(new PickupChannel(_provider, context.Channel));
+            }
+            else
+            {
+                config.Enabled = true;
+                var newChannel = new PickupChannel(_provider, context.Channel, config);
+                PickupChannels.Add(newChannel);
+                
+                _db.ChannelConfigs.Update(config);
+                _db.SaveChanges();
+            }
             
-            PickupChannels.Add(new PickupChannel(context.Channel));
             return PickupResponse.PickupsEnabled(context.Channel.Name);
         }
         
@@ -42,7 +81,10 @@ namespace PickupGameBot.Services
             if (channel == null) 
                 return PickupResponse.PickupsWereNotEnabled;
             
-            PickupChannels.RemoveAll(c => c.MessageChannel.Id == context.Channel.Id);
+            PickupChannels.RemoveAll(c => c.Config.ChannelId == context.Channel.Id);
+            channel.Config.Enabled = false;
+            _db.ChannelConfigs.Update(channel.Config);
+            _db.SaveChanges();
             return PickupResponse.PickupsDisabled(context.Channel.Name);
         }
 
@@ -81,6 +123,12 @@ namespace PickupGameBot.Services
             try {return GetPickupChannel(context).GetStatus();}
             catch(Exception e ) { return PickupResponse.NoPickupsForChannel; }
         }
+        
+        public PickupResponse GetSettings(ICommandContext context)
+        {
+            try {return GetPickupChannel(context).GetSettings();}
+            catch(Exception e ) { return PickupResponse.NoPickupsForChannel; }
+        }
 
         public PickupResponse SetTeamSize(ICommandContext context, string value)
         {
@@ -106,20 +154,6 @@ namespace PickupGameBot.Services
             catch(Exception e ) { return PickupResponse.NoPickupsForChannel; }
         }
 
-//        private PickupStatus BuildPickupStatus(PickupResponse puResponse)
-//        {
-//            return new PickupStatus(
-//                PickupState,
-//                _minimumPlayers,
-//                Captains,
-//                PlayerPool,
-//                Team1,
-//                Team2,
-//                BothTeamsAreFull(),
-//                puResponse
-//            );
-//        }
-
         public PickupResponse Repick(ICommandContext context)
         {
             var channel = GetPickupChannel(context);
@@ -128,7 +162,6 @@ namespace PickupGameBot.Services
                 : PickupResponse.PickingRestarted;
         }
 
-        // TODO: Mention all players that were in pool
         public PickupResponse Reset(ICommandContext context)
         {
             var channel = GetPickupChannel(context);

@@ -5,7 +5,7 @@ namespace PickupGameBot.Entities.PickModes
     public class EveryOtherPickMode : IPickMode
     {
         public int Id { get; set; } = 1;
-        public string Name { get; set; } = "EveryOther";
+        public string Name { get; set; } = "Every Other";
         
         public Dictionary<int, int> PickMap { get; set; } = new Dictionary<int, int>
         {
