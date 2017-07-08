@@ -41,7 +41,6 @@ namespace PickupGameBot.Entities
             : $"Need {PlayersNeeded} more players.";
         
         public PickupChannel(IServiceProvider provider, IMessageChannel chan)
-//        public PickupChannel(IMessageChannel chan)
         {
             _provider = provider;
             _db = _provider.GetService<ChannelDatabase>();
@@ -52,14 +51,13 @@ namespace PickupGameBot.Entities
                 PickModeId = _pickMode.Id,
                 TeamSize = Game.DefaultTeamSize
             };
-//            _db.ChannelConfigs.Add(Config);
+            _db.ChannelConfigs.Add(Config);
             _db.SaveChanges();
             
             CurrentGame = new Game(Config.TeamSize*2);
         }
 
         public PickupChannel(IServiceProvider provider, IMessageChannel chan, ChannelConfig config)
-//        public PickupChannel(IMessageChannel chan, ChannelConfig config)
         {
             _provider = provider;
             _db = _provider.GetService<ChannelDatabase>();
