@@ -71,6 +71,14 @@ namespace PickupGameBot.Entities
                 ? PickupResponse.NoPlayersInPool 
                 : PickupResponse.Good($"**{FormattedPlayerNumbers()}**: {PlayerPool.ToFormattedList()}");
         }
+
+        public PickupResponse GetSettings()
+        {
+            var responseBuilder = new StringBuilder();
+            responseBuilder.Append($"Team Size: {Config.TeamSize}{Environment.NewLine}");
+            responseBuilder.Append($"Pick Mode: {_pickMode}");
+            return PickupResponse.Good(responseBuilder.ToString());
+        }
        
         private PickupResponse StartPicking(string playerJoinString)
         {
