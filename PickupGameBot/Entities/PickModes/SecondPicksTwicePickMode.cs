@@ -5,7 +5,7 @@ namespace PickupGameBot.Entities.PickModes
     public class SecondPicksTwicePickMode : IPickMode
     {
         public int Id { get; set; } = 2;
-        public string Name { get; set; } = "SecondPicksTwice";
+        public string Name { get; set; } = "Second Picks Twice";
 
         public Dictionary<int, int> PickMap { get; set; } = new Dictionary<int, int>
         {
