@@ -58,6 +58,16 @@ namespace PickupGameBot.Modules
                     .WithValue(response.Messages.First())));
         }
 
+        [Command("settings"), Summary("Show currently configured settings for channel")]
+        public async Task Settings()
+        {
+            var response = _pickupService.GetSettings(Context);
+            await ReplyAsync("", embed: new EmbedBuilder().WithColor(new Color(0, 255, 0))
+                .AddField(new EmbedFieldBuilder()
+                    .WithName("Current Channel Settings:")
+                    .WithValue(response.Messages.First())));
+        }
+
         [Command("help"), Summary("Show basic commands")]
         public async Task Help()
         {

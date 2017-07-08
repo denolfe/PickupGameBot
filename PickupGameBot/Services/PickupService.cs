@@ -123,6 +123,12 @@ namespace PickupGameBot.Services
             try {return GetPickupChannel(context).GetStatus();}
             catch(Exception e ) { return PickupResponse.NoPickupsForChannel; }
         }
+        
+        public PickupResponse GetSettings(ICommandContext context)
+        {
+            try {return GetPickupChannel(context).GetSettings();}
+            catch(Exception e ) { return PickupResponse.NoPickupsForChannel; }
+        }
 
         public PickupResponse SetTeamSize(ICommandContext context, string value)
         {
