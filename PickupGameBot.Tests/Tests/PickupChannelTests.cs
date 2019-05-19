@@ -1,10 +1,8 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using Discord;
 using PickupGameBot.Entities;
 using PickupGameBot.Enums;
-using PickupGameBot.Services;
 using PickupGameBot.Tests.Stubs;
 using Xunit;
 
@@ -35,7 +33,7 @@ namespace PickupGameBot.Tests.Tests
         public void ShouldInitializeGameAndPlayerPool()
         {
             Assert.NotNull(_channel.CurrentGame);
-            Assert.Equal(0, _channel.PlayerPool.Count);
+            Assert.Empty(_channel.PlayerPool);
         }
         
 #region Add/Remove Players
@@ -46,7 +44,7 @@ namespace PickupGameBot.Tests.Tests
             var response = _channel.AddPlayerToPool(user, false);
             Assert.True(response.Success);
             Assert.Contains("joined", response.JoinedMessages);
-            Assert.Equal(1, _channel.PlayerPool.Count);
+            Assert.Single(_channel.PlayerPool);
         }
         
         [Fact]
@@ -56,7 +54,7 @@ namespace PickupGameBot.Tests.Tests
             var response = _channel.AddPlayerToPool(user, true);
             Assert.True(response.Success);
             Assert.Contains("joined", response.JoinedMessages);
-            Assert.Equal(1, _channel.PlayerPool.Where(p => p.WantsCaptain).ToList().Count);
+            Assert.Single(_channel.PlayerPool.Where(p => p.WantsCaptain).ToList());
         }
         
         [Fact]
@@ -78,7 +76,7 @@ namespace PickupGameBot.Tests.Tests
             var response2 = _channel.RemovePlayerFromPool(user);
             Assert.True(response2.Success);
             Assert.Contains("removed", response2.JoinedMessages);
-            Assert.Equal(0, _channel.PlayerPool.Count);
+            Assert.Empty(_channel.PlayerPool);
         }
 
         [Fact]
@@ -88,7 +86,7 @@ namespace PickupGameBot.Tests.Tests
             var response = _channel.RemovePlayerFromPool(user);
             Assert.False(response.Success);
             Assert.Contains("not in the player list", response.JoinedMessages);
-            Assert.Equal(0, _channel.PlayerPool.Count);
+            Assert.Empty(_channel.PlayerPool);
         }
 
         [Fact]
@@ -300,7 +298,7 @@ namespace PickupGameBot.Tests.Tests
             }
             
             Assert.True(_channel.LastGame.Picked);
-            Assert.Equal(0, _channel.PlayerPool.Count);
+            Assert.Empty(_channel.PlayerPool);
         }
 #endregion
     }

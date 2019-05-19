@@ -30,7 +30,7 @@ namespace PickupGameBot.Modules
             await ReplyAsync("", embed: new EmbedBuilder().WithColor(new Color(0, 255, 0))
                 .AddField(new EmbedFieldBuilder()
                     .WithName("Player Pick")
-                    .WithValue(response.Messages.First())));
+                    .WithValue(response.Messages.First())).Build());
         }
         
         [Command("join"), Summary("Add player to player pool")]
@@ -42,7 +42,7 @@ namespace PickupGameBot.Modules
             await ReplyAsync("", embed: new EmbedBuilder().WithColor(new Color(0, 255, 0))
                 .AddField(new EmbedFieldBuilder()
                     .WithName("Player Pool Changed")
-                    .WithValue(response.Messages.First())));
+                    .WithValue(response.Messages.First())).Build());
         }
 
         [Command("leave"), Summary("Remove player from player pool")]
@@ -53,7 +53,7 @@ namespace PickupGameBot.Modules
             await ReplyAsync("", embed: new EmbedBuilder().WithColor(new Color(0, 255, 0))
                 .AddField(new EmbedFieldBuilder()
                     .WithName("Player Pool Changed")
-                    .WithValue(response.Messages.First())));
+                    .WithValue(response.Messages.First())).Build());
         }
         
         [Command("status"), Summary("Show information about current pickup game")]
@@ -64,7 +64,7 @@ namespace PickupGameBot.Modules
             await ReplyAsync("", embed: new EmbedBuilder().WithColor(new Color(0, 255, 0))
                 .AddField(new EmbedFieldBuilder()
                     .WithName("Player Pool")
-                    .WithValue(response.Messages.First())));
+                    .WithValue(response.Messages.First())).Build());
         }
 
         [Command("settings"), Summary("Show currently configured settings for channel")]
@@ -74,13 +74,13 @@ namespace PickupGameBot.Modules
             await ReplyAsync("", embed: new EmbedBuilder().WithColor(new Color(0, 255, 0))
                 .AddField(new EmbedFieldBuilder()
                     .WithName("Current Channel Settings:")
-                    .WithValue(response.Messages.First())));
+                    .WithValue(response.Messages.First())).Build());
         }
 
         [Command("help"), Summary("Show basic commands")]
         public async Task Help()
         {
-            await ReplyAsync("", embed: StaticMessages.Help());
+            await ReplyAsync("", embed: StaticMessages.Help().Build());
         }
     }
 }

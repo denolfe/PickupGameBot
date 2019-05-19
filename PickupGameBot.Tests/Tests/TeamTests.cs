@@ -21,7 +21,7 @@ namespace PickupGameBot.Tests.Tests
             var captain = PugPlayerStub.EligibleCaptain(_rand);
             _team = new Team(1, captain, 5);
             
-            Assert.Equal(1, _team.Players.Count);
+            Assert.Single(_team.Players);
             Assert.Equal(1, _team.Id);
             Assert.NotNull(_team.Captain);
             Assert.Equal(5, _team.MaxPlayers);

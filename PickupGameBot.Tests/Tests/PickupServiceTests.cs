@@ -21,7 +21,7 @@ namespace PickupGameBot.Tests.Tests
         public void ShouldBeAbleToEnablePickupsOnAChannel()
         {
             var response = _service.EnablePickups(CommandContextStub.Generate(_rand));
-            Assert.Equal(1, _service.PickupChannels.Count);
+            Assert.Single(_service.PickupChannels);
         }
         
         [Fact]
@@ -29,7 +29,7 @@ namespace PickupGameBot.Tests.Tests
         {
             _service.EnablePickups(CommandContextStub.Generate(_rand));
             var response = _service.DisablePickups(CommandContextStub.Generate(_rand));
-            Assert.Equal(0, _service.PickupChannels.Count);
+            Assert.Empty(_service.PickupChannels);
         }
 
         [Fact]
@@ -39,7 +39,7 @@ namespace PickupGameBot.Tests.Tests
             _service.EnablePickups(channel);
             var response = _service.EnablePickups(channel);
             Assert.False(response.Success);
-            Assert.Equal(1, _service.PickupChannels.Count);
+            Assert.Single(_service.PickupChannels);
         }
         
         [Fact]
@@ -48,7 +48,7 @@ namespace PickupGameBot.Tests.Tests
             var channel = CommandContextStub.Generate(_rand);
             var response = _service.DisablePickups(channel);
             Assert.False(response.Success);
-            Assert.Equal(0, _service.PickupChannels.Count);
+            Assert.Empty(_service.PickupChannels);
         }
         
     }

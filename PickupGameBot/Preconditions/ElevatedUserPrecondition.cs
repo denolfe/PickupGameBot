@@ -14,7 +14,7 @@ namespace PickupGameBot.Preconditions
     {
         public class RequireElevatedUserAttribute : PreconditionAttribute
         {
-            public override Task<PreconditionResult> CheckPermissions(ICommandContext context, CommandInfo command, IServiceProvider services)
+            public override Task<PreconditionResult> CheckPermissionsAsync(ICommandContext context, CommandInfo command, IServiceProvider services)
             {
                 if (context.Guild == null)
                     return Task.FromResult(PreconditionResult.FromError("This command may only be run in a guild."));

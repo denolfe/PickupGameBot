@@ -44,7 +44,7 @@ namespace PickupGameBot.Tests.Tests
             var response = _service.Reset(_context);
 
             Assert.True(response.Success);
-            Assert.Equal(0, _service.GetPickupChannel(_context).PlayerPool.Count);
+            Assert.Empty(_service.GetPickupChannel(_context).PlayerPool);
         }
 
         [Fact]

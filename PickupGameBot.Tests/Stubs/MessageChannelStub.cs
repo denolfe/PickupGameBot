@@ -35,13 +35,14 @@ namespace PickupGameBot.Tests.Stubs
             throw new NotImplementedException();
         }
 
-        public Task<IUserMessage> SendFileAsync(string filePath, string text = null, bool isTTS = false, RequestOptions options = null)
+        public Task<IUserMessage> SendFileAsync(string filePath, string text = null, bool isTTS = false, Embed embed = null,
+            RequestOptions options = null, bool isSpoiler = false)
         {
             throw new NotImplementedException();
         }
 
-        public Task<IUserMessage> SendFileAsync(Stream stream, string filename, string text = null, bool isTTS = false,
-            RequestOptions options = null)
+        public Task<IUserMessage> SendFileAsync(Stream stream, string filename, string text = null, bool isTTS = false, Embed embed = null,
+            RequestOptions options = null, bool isSpoiler = false)
         {
             throw new NotImplementedException();
         }
@@ -69,6 +70,16 @@ namespace PickupGameBot.Tests.Stubs
         }
 
         public Task<IReadOnlyCollection<IMessage>> GetPinnedMessagesAsync(RequestOptions options = null)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task DeleteMessageAsync(ulong messageId, RequestOptions options = null)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task DeleteMessageAsync(IMessage message, RequestOptions options = null)
         {
             throw new NotImplementedException();
         }

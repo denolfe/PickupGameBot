@@ -16,7 +16,7 @@ namespace PickupGameBot.Modules
     public class AdminModule : ModuleBase
     {
         private readonly PickupService _pickupService;
-        private readonly ChannelDatabase _db;
+//        private readonly ChannelDatabase _db;
 
 //        private Task BuildMessageAsync(PickupStatus response)
 //        {
@@ -33,7 +33,7 @@ namespace PickupGameBot.Modules
         public async Task EnablePickups()
         {
             var response = _pickupService.EnablePickups(Context);
-            await ReplyAsync("Pickup Game Bot Enabled", embed: StaticMessages.Welcome());
+            await ReplyAsync("Pickup Game Bot Enabled", embed: StaticMessages.Welcome().Build());
         }
         
         [Command("disable"), Summary("Disable pickups in current channel")]

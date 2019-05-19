@@ -27,14 +27,14 @@ namespace PickupGameBot.Entities
         private int _pickNumber = 1;
 //        private int _preferredTeamSize = 0;
         private IPickMode _pickMode = new EveryOtherPickMode();
-        private CaptainMode _captainMode = CaptainMode.Default;
+//        private CaptainMode _captainMode = CaptainMode.Default;
         public List<IRole> AdminGroups = new List<IRole>();
         private readonly ChannelDatabase _db;
         private readonly IServiceProvider _provider;
 
-        public bool HasMinimumPlayers => PlayerPool.Count >= CurrentGame.MinimumPlayers;
+        private bool HasMinimumPlayers => PlayerPool.Count >= CurrentGame.MinimumPlayers;
         public bool HasEnoughEligibleCaptains => PlayerPool.Count(p => p.WantsCaptain) >= 2 || Captains.Count == 2;
-        public int PlayersNeeded => CurrentGame.MinimumPlayers - PlayerPool.Count;
+        private int PlayersNeeded => CurrentGame.MinimumPlayers - PlayerPool.Count;
         private string FormattedPlayerNumbers() => $"[{PlayerPool.Count}/{CurrentGame.MinimumPlayers}]";
         private string FormattedPlayersNeeded() => HasMinimumPlayers
             ? string.Empty

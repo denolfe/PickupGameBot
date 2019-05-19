@@ -52,7 +52,7 @@ namespace PickupGameBot.Tests.Tests
             _game.AddToCaptainsTeam(captain1, new PugPlayer(UserStub.Generate(_rand), false));
             
             Assert.Equal(2, _game.Teams[1].Players.Count);
-            Assert.Equal(1, _game.Teams[2].Players.Count);
+            Assert.Single(_game.Teams[2].Players);
         }
         
         [Fact]
@@ -69,7 +69,7 @@ namespace PickupGameBot.Tests.Tests
             _game.AddToCaptainsTeam(captain2, new PugPlayer(UserStub.Generate(_rand), false));
             var removedPlayers = _game.RemoveTeams();
             
-            Assert.Equal(0, _game.Teams.Count);
+            Assert.Empty(_game.Teams);
             Assert.Equal(4, removedPlayers.Count);
         }
         
@@ -87,8 +87,8 @@ namespace PickupGameBot.Tests.Tests
             _game.AddToCaptainsTeam(captain2, new PugPlayer(UserStub.Generate(_rand), false));
             var removedPlayers = _game.Repick();
             
-            Assert.Equal(1, _game.Teams[1].Players.Count);
-            Assert.Equal(1, _game.Teams[2].Players.Count);
+            Assert.Single(_game.Teams[1].Players);
+            Assert.Single(_game.Teams[2].Players);
             Assert.NotNull(_game.Teams[2].Captain);
             Assert.NotNull(_game.Teams[2].Captain);
         }

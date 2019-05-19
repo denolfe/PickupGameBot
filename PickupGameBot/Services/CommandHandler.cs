@@ -31,8 +31,8 @@ namespace PickupGameBot.Services
         {
             PrettyConsole.Log(LogSeverity.Info, "Commands", $"Loading commands");
 
-            await _commands.AddModulesAsync(Assembly.GetEntryAssembly());
-            await _commands.AddModulesAsync(typeof(Entity<>).GetTypeInfo().Assembly);
+            await _commands.AddModulesAsync(Assembly.GetEntryAssembly(), _provider);
+            await _commands.AddModulesAsync(typeof(Entity<>).GetTypeInfo().Assembly, _provider);
 
             _commands.Log += OnLogAsync;
 

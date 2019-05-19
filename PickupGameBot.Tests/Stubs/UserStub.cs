@@ -11,7 +11,8 @@ namespace PickupGameBot.Tests.Stubs
         public ulong Id { get; set; }
         public DateTimeOffset CreatedAt { get; }
         public string Mention { get; set; }
-        public Game? Game { get; }
+        public Game Game { get; }
+        public IActivity Activity { get; }
         public UserStatus Status { get; }
 
         public static UserStub Generate(Random rand)
@@ -22,6 +23,11 @@ namespace PickupGameBot.Tests.Stubs
         
         public string GetAvatarUrl(ImageFormat format = ImageFormat.Auto, ushort size = 128)
             => throw new NotImplementedException();
+
+        public string GetDefaultAvatarUrl()
+        {
+            throw new NotImplementedException();
+        }
 
         public Task<IDMChannel> GetOrCreateDMChannelAsync(RequestOptions options = null) 
             => throw new NotImplementedException();
